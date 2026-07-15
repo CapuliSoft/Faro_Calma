@@ -197,7 +197,9 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
               ),
             ),
             child: Material(
-              color: Colors.transparent,
+              color: selected
+                  ? SensoryColors.primary.withValues(alpha: isDark ? 0.20 : 0.15)
+                  : cardColor,
               borderRadius: BorderRadius.circular(20),
               clipBehavior: Clip.antiAlias,
               child: ListTile(
