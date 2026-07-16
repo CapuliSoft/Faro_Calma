@@ -185,9 +185,6 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
           padding: const EdgeInsets.only(bottom: 12.0),
           child: Container(
             decoration: BoxDecoration(
-              color: selected
-                  ? SensoryColors.primary.withValues(alpha: isDark ? 0.20 : 0.15)
-                  : cardColor,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: selected
