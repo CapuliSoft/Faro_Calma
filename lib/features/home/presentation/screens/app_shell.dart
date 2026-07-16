@@ -5,6 +5,8 @@ import 'package:gtc6/features/home/presentation/screens/home_screen.dart';
 import 'package:gtc6/features/sound_therapy/presentation/screens/sound_therapy_selector_screen.dart';
 import 'package:gtc6/features/progress/presentation/screens/progress_screen.dart';
 import 'package:gtc6/features/rmp/presentation/screens/rmp_intro_screen.dart';
+import 'package:gtc6/features/breathing/presentation/screens/breathing_intro_screen.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -20,6 +22,7 @@ class _AppShellState extends State<AppShell> {
     const HomeScreen(),
     const SoundTherapySelectorScreen(),
     const RmpIntroScreen(),
+    const BreathingIntroScreen(),
     const ProgressScreen(),
   ];
 
@@ -38,9 +41,9 @@ class _AppShellState extends State<AppShell> {
             children: _pages,
           ),
           Positioned(
-            left: 20,
-            right: 20,
-            bottom: 20,
+            left: 14,
+            right: 14,
+            bottom: 16,
             child: _buildFloatingNavbar(isDark),
           ),
         ],
@@ -58,10 +61,10 @@ class _AppShellState extends State<AppShell> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          height: 74,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: 72,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: cardColor.withValues(alpha: isDark ? 0.85 : 0.90),
+            color: cardColor.withValues(alpha: isDark ? 0.88 : 0.92),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: borderColor, width: 1.5),
             boxShadow: [
@@ -75,10 +78,11 @@ class _AppShellState extends State<AppShell> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(0, Icons.sports_esports_rounded, 'Juegos'),
-              _buildNavItem(1, Icons.graphic_eq_rounded, 'Sonidos'),
-              _buildNavItem(2, Icons.accessibility_new_rounded, 'Relajación'),
-              _buildNavItem(3, Icons.bar_chart_rounded, 'Progreso'),
+              _buildNavItem(0, Icons.fact_check_rounded, AppLocalizations.of(context)?.tabRoutines ?? 'Rutinas'),
+              _buildNavItem(1, Icons.graphic_eq_rounded, AppLocalizations.of(context)?.tabSounds ?? 'Sonidos'),
+              _buildNavItem(2, Icons.accessibility_new_rounded, AppLocalizations.of(context)?.tabRelaxation ?? 'Relajación'),
+              _buildNavItem(3, Icons.air_rounded, AppLocalizations.of(context)?.tabBreathing ?? 'Respiración'),
+              _buildNavItem(4, Icons.bar_chart_rounded, AppLocalizations.of(context)?.tabProgress ?? 'Progreso'),
             ],
           ),
         ),
@@ -90,7 +94,7 @@ class _AppShellState extends State<AppShell> {
     final theme = Theme.of(context);
     final isSelected = _currentIndex == index;
     final activeColor = SensoryColors.primary;
-    final inactiveColor = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5);
+    final inactiveColor = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.55);
 
     return GestureDetector(
       onTap: () {
@@ -102,12 +106,12 @@ class _AppShellState extends State<AppShell> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? activeColor.withValues(alpha: 0.15)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -115,7 +119,7 @@ class _AppShellState extends State<AppShell> {
             Icon(
               icon,
               color: isSelected ? activeColor : inactiveColor,
-              size: 24,
+              size: 22,
             ),
             AnimatedSize(
               duration: const Duration(milliseconds: 200),
@@ -123,13 +127,13 @@ class _AppShellState extends State<AppShell> {
               child: SizedBox(
                 width: isSelected ? null : 0,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.only(left: 6.0),
                   child: Text(
                     label,
                     style: TextStyle(
                       color: activeColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 13,
+                      fontSize: 12,
                     ),
                   ),
                 ),

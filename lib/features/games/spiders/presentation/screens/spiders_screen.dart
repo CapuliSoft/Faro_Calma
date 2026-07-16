@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/spiders_canvas.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class SpidersScreen extends StatefulWidget {
   const SpidersScreen({super.key});
@@ -33,9 +34,9 @@ class _SpidersScreenState extends State<SpidersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Telaraña Interactiva',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)?.routineSpidersTitle ?? 'Arañas Relajantes',
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),

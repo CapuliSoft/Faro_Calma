@@ -5,11 +5,18 @@ class SensoryColors {
   static const Color background = Color(0xFFF3F7F9);
   static const Color surface = Colors.white;
   
-  static const Color calmBlue = Color(0xFFD0E8F2);
-  static const Color calmGreen = Color(0xFFDDF2D1);
-  static const Color calmPurple = Color(0xFFE8DFF5);
-  static const Color calmPink = Color(0xFFFCE1E4);
-  static const Color calmYellow = Color(0xFFFCF4DD);
+  static const Color calmBlue = Color(0xFFC6E0EE);
+  static const Color calmGreen = Color(0xFFD4EAD0);
+  static const Color calmPurple = Color(0xFFD5DEEC); // Glacier slate blue (unisex & soothing)
+  static const Color calmPink = Color(0xFFE6DBCB);   // Warm sand / terracota zen (unisex & grounding)
+  static const Color calmYellow = Color(0xFFF7ECD5);
+  
+  // Sophisticated Zen & Scientific Mindfulness Colors (richer contrast for text, icons, buttons & visualizers)
+  static const Color zenTeal = Color(0xFF00897B);    // Deep ocean teal (Relajación profunda & Sueño)
+  static const Color zenIndigo = Color(0xFF3949AB);  // Tactical slate navy (Enfoque & Box Breathing)
+  static const Color zenSage = Color(0xFF2E7D32);    // Heart coherence forest sage (Coherencia Cardíaca)
+  static const Color zenAmber = Color(0xFFD84315);   // Energizing sunset amber (Suspiro Fisiológico / Alerta)
+  static const Color zenCyan = Color(0xFF0097A6);    // Mineral aegean cyan (Calma fisiológica rápida)
   
   static const Color textDark = Color(0xFF2C3E50);
   static const Color textLight = Color(0xFF7F8C8D);
@@ -20,8 +27,9 @@ class SensoryColors {
   static const Color textDarkSecondary = Color(0xFFECEFF1);
   static const Color textLightSecondary = Color(0xFF90A4AE);
   
-  static const Color primary = Color(0xFF9FB8AD); // Soft sage green
-  static const Color secondary = Color(0xFF8FA0B3); // Soft slate blue
+  static const Color primary = Color(0xFF5B8A72); // Refined deep sage green
+  static const Color secondary = Color(0xFF627A95); // Refined slate blue
+  static const Color error = Color(0xFFE53935); // Centralized error/danger color
   
   static const List<Color> gameColors = [
     calmBlue,

@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:gtc6/core/theme/colors.dart';
 
@@ -65,13 +68,75 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
   final List<Ball> _balls = [];
   final Random _random = Random();
   
-  double _gravity = 0.3; // Default gravity
-  final double _friction = 0.99; // Air resistance
+  double _gravity = 0.3;
+  final double _friction = 0.99;
   bool _useGravity = true;
+  bool _soundEnabled = true;
+
+  late final AudioPlayer _audioPlayer;
+
+  // ── Bubble sound synthesis ──────────────────────────────────────
+
+  /// Generates a short bubble-pop WAV in memory and plays it.
+  /// The sound is a sine wave that quickly rises in frequency (like a bubble).
+  Future<void> _playBubble() async {
+    if (!_soundEnabled) return;
+    const int sampleRate = 22050;
+    const int durationMs = 80;
+    const int numSamples = sampleRate * durationMs ~/ 1000;
+
+    // Random pitch variation: 400 Hz - 900 Hz
+    final double baseFreq = 400 + _random.nextDouble() * 500;
+
+    final ByteData pcm = ByteData(numSamples * 2);
+    for (int i = 0; i < numSamples; i++) {
+      final double t = i / sampleRate;
+      // Frequency sweep upward
+      final double freq = baseFreq + (baseFreq * 1.5) * (t / (durationMs / 1000));
+      // Envelope: quick attack, fast decay
+      final double envelope = (1.0 - (i / numSamples)) * (i < numSamples * 0.1
+          ? i / (numSamples * 0.1)
+          : 1.0);
+      final double sample = sin(2 * pi * freq * t) * envelope * 0.6;
+      pcm.setInt16(i * 2, (sample * 32767).round().clamp(-32768, 32767), Endian.little);
+    }
+
+    // Build a minimal PCM WAV header (44 bytes)
+    final int dataSize = numSamples * 2;
+    final ByteData header = ByteData(44);
+    // RIFF chunk
+    header.setUint8(0, 0x52); header.setUint8(1, 0x49); // 'RI'
+    header.setUint8(2, 0x46); header.setUint8(3, 0x46); // 'FF'
+    header.setUint32(4, 36 + dataSize, Endian.little);  // ChunkSize
+    header.setUint8(8, 0x57); header.setUint8(9, 0x41); // 'WA'
+    header.setUint8(10, 0x56); header.setUint8(11, 0x45); // 'VE'
+    // fmt sub-chunk
+    header.setUint8(12, 0x66); header.setUint8(13, 0x6D); // 'fm'
+    header.setUint8(14, 0x74); header.setUint8(15, 0x20); // 't '
+    header.setUint32(16, 16, Endian.little);            // Subchunk1Size
+    header.setUint16(20, 1, Endian.little);             // AudioFormat PCM
+    header.setUint16(22, 1, Endian.little);             // NumChannels mono
+    header.setUint32(24, sampleRate, Endian.little);    // SampleRate
+    header.setUint32(28, sampleRate * 2, Endian.little);// ByteRate
+    header.setUint16(32, 2, Endian.little);             // BlockAlign
+    header.setUint16(34, 16, Endian.little);            // BitsPerSample
+    // data sub-chunk
+    header.setUint8(36, 0x64); header.setUint8(37, 0x61); // 'da'
+    header.setUint8(38, 0x74); header.setUint8(39, 0x61); // 'ta'
+    header.setUint32(40, dataSize, Endian.little);      // Subchunk2Size
+
+    final Uint8List wav = Uint8List(44 + dataSize);
+    wav.setRange(0, 44, header.buffer.asUint8List());
+    wav.setRange(44, 44 + dataSize, pcm.buffer.asUint8List());
+
+    final String b64 = base64Encode(wav);
+    await _audioPlayer.play(BytesSource(base64Decode(b64)), volume: 0.4);
+  }
 
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -166,7 +231,6 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
   void _addBall(Offset touchPosition) {
     final List<Color> colors = SensoryColors.gameColors;
     setState(() {
-      // Soft spawn animation/position
       _balls.add(
         Ball(
           position: touchPosition,
@@ -179,11 +243,11 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
         ),
       );
 
-      // Keep maximum 40 balls to prevent performance drops and visual clutter
       if (_balls.length > 40) {
         _balls.removeAt(0);
       }
     });
+    _playBubble(); // 🫧 bubble pop sound
   }
 
   void _handleTap(TapUpDetails details) {
@@ -206,11 +270,13 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
   @override
   void dispose() {
     _controller.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
     return Column(
       children: [
         // Controls Column
@@ -224,7 +290,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
                   Row(
                     children: [
                       Text(
-                        'Gravedad',
+                        isEs ? 'Gravedad' : 'Gravity',
                         style: TextStyle(
                           color: SensoryColors.textDark.withValues(alpha: 0.8),
                           fontWeight: FontWeight.bold,
@@ -241,10 +307,22 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
                       ),
                     ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.refresh_rounded),
-                    color: SensoryColors.textDark,
-                    onPressed: _clearBalls,
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(_soundEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded),
+                        color: _soundEnabled ? SensoryColors.primary : SensoryColors.textDark.withValues(alpha: 0.5),
+                        tooltip: _soundEnabled
+                            ? (isEs ? 'Silenciar sonido' : 'Mute sound')
+                            : (isEs ? 'Activar sonido' : 'Unmute sound'),
+                        onPressed: () => setState(() => _soundEnabled = !_soundEnabled),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.refresh_rounded),
+                        color: SensoryColors.textDark,
+                        onPressed: _clearBalls,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -252,7 +330,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
                 Row(
                   children: [
                     Text(
-                      'Fuerza: ',
+                      isEs ? 'Fuerza: ' : 'Strength: ',
                       style: TextStyle(
                         color: SensoryColors.textDark.withValues(alpha: 0.8),
                         fontWeight: FontWeight.bold,
@@ -297,7 +375,9 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            '¡Toca o arrastra el dedo por la pantalla para crear bolitas!',
+            isEs
+                ? '¡Toca o arrastra el dedo por la pantalla para crear bolitas!'
+                : 'Tap or drag your finger on the screen to create balls!',
             style: TextStyle(
               color: SensoryColors.textLight,
               fontSize: 14,

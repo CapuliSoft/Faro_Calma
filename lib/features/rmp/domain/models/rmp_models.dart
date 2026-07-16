@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class MuscleGroup {
   final String id;
   final String name;
@@ -280,3 +282,224 @@ final List<MuscleGroup> kRmpMuscleGroups = [
     ],
   ),
 ];
+
+extension LocalizedMuscleGroup on MuscleGroup {
+  String getLocalizedName(BuildContext context) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+    if (isEs) return name;
+    switch (id) {
+      case 'manoDerecha': return 'Right Hand and Forearm';
+      case 'manoIzquierda': return 'Left Hand and Forearm';
+      case 'bicepsDerecho': return 'Right Biceps';
+      case 'bicepsIzquierdo': return 'Left Biceps';
+      case 'frente': return 'Forehead';
+      case 'ojosNariz': return 'Eyes and Nose';
+      case 'mandibula': return 'Jaw';
+      case 'cuello': return 'Neck and Throat';
+      case 'hombros': return 'Shoulders';
+      case 'espalda': return 'Upper Back';
+      case 'abdomen': return 'Abdomen';
+      case 'muslos': return 'Thighs';
+      case 'pantorrillas': return 'Calves';
+      case 'pies': return 'Feet';
+    }
+    return name;
+  }
+
+  String getLocalizedCategory(BuildContext context) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+    if (isEs) return category;
+    switch (category) {
+      case 'Brazos': return 'Arms';
+      case 'Cara y Cabeza': return 'Face and Head';
+      case 'Cuello y Hombros': return 'Neck and Shoulders';
+      case 'Torso': return 'Torso';
+      case 'Piernas y Pies': return 'Legs and Feet';
+    }
+    return category;
+  }
+
+  List<String> getLocalizedTensionSteps(BuildContext context) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+    if (isEs) return tensionSteps;
+    switch (id) {
+      case 'manoDerecha':
+        return [
+          'Make a tight fist with your right hand',
+          'Squeeze tightly',
+          'Feel the tension in your fingers and forearm',
+        ];
+      case 'manoIzquierda':
+        return [
+          'Make a tight fist with your left hand',
+          'Squeeze tightly',
+          'Feel the tension in your fingers and forearm',
+        ];
+      case 'bicepsDerecho':
+        return [
+          'Bend your right elbow and tense your biceps',
+          'Squeeze hard towards your shoulder',
+          'Feel the tension in your upper arm',
+        ];
+      case 'bicepsIzquierdo':
+        return [
+          'Bend your left elbow and tense your biceps',
+          'Squeeze hard towards your shoulder',
+          'Feel the tension in your upper arm',
+        ];
+      case 'frente':
+        return [
+          'Raise your eyebrows as high as possible',
+          'Wrinkle your forehead tightly',
+          'Feel the tension above your eyebrows',
+        ];
+      case 'ojosNariz':
+        return [
+          'Close your eyes tightly',
+          'Wrinkle your nose upwards',
+          'Feel the pressure in the center of your face',
+        ];
+      case 'mandibula':
+        return [
+          'Clench your teeth firmly',
+          'Tense your cheeks and jaw',
+          'Feel the stiffness in your jaw',
+        ];
+      case 'cuello':
+        return [
+          'Bring your chin slowly down to your chest',
+          'Tense the front muscles of your neck',
+          'Feel the contraction in your throat',
+        ];
+      case 'hombros':
+        return [
+          'Shrug your shoulders up to your ears',
+          'Squeeze tightly upwards',
+          'Feel the tension in your shoulders and neck',
+        ];
+      case 'espalda':
+        return [
+          'Pull your elbows back trying to bring shoulder blades together',
+          'Arch your upper back slightly',
+          'Feel the muscle contraction in your back',
+        ];
+      case 'abdomen':
+        return [
+          'Make your stomach hard and tense',
+          'As if preparing to receive a gentle blow',
+          'Feel the tension in the abdominal wall',
+        ];
+      case 'muslos':
+        return [
+          'Squeeze your legs and tense your thighs',
+          'As if pushing the floor hard',
+          'Feel the firmness in your legs',
+        ];
+      case 'pantorrillas':
+        return [
+          'Point your toes down extending your ankles',
+          'Tense your calves firmly',
+          'Feel the tension in the back of your leg',
+        ];
+      case 'pies':
+        return [
+          'Curl your toes inward',
+          'Squeeze the arch of your foot tightly',
+          'Feel the accumulated tension in your foot',
+        ];
+    }
+    return tensionSteps;
+  }
+
+  List<String> getLocalizedRelaxationSteps(BuildContext context) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+    if (isEs) return relaxationSteps;
+    switch (id) {
+      case 'manoDerecha':
+        return [
+          'Open your right hand completely',
+          'Let it fall loose and limp',
+          'Feel your fingers naturally relaxed and at rest',
+        ];
+      case 'manoIzquierda':
+        return [
+          'Open your left hand completely',
+          'Let it fall loose and limp',
+          'Feel your fingers naturally relaxed and at rest',
+        ];
+      case 'bicepsDerecho':
+        return [
+          'Extend your right arm gently',
+          'Let the arm rest in your lap or side',
+          'Feel the arm completely free of tension',
+        ];
+      case 'bicepsIzquierdo':
+        return [
+          'Extend your left arm gently',
+          'Let the arm rest in your lap or side',
+          'Feel the arm completely free of tension',
+        ];
+      case 'frente':
+        return [
+          'Release your eyebrows and relax your forehead',
+          'Imagine your forehead as smooth as a calm lake',
+          'Feel the skin soft and wrinkle-free',
+        ];
+      case 'ojosNariz':
+        return [
+          'Gently release your eyelids',
+          'Let your nose rest',
+          'Eyes closed in a soft and natural way',
+        ];
+      case 'mandibula':
+        return [
+          'Release your teeth and open your mouth slightly',
+          'Let your jaw drop loose',
+          'Feel how your cheeks relax',
+        ];
+      case 'cuello':
+        return [
+          'Return your head to a comfortable position',
+          'Leave your neck loose and relaxed',
+          'Feel the balanced weight of your head',
+        ];
+      case 'hombros':
+        return [
+          'Drop your shoulders suddenly',
+          'Feel them fall heavy and rested',
+          'Imagine your shoulders melting downwards',
+        ];
+      case 'espalda':
+        return [
+          'Release your elbows and relax your back',
+          'Let your shoulders rest forward',
+          'Feel your back wide, released and at peace',
+        ];
+      case 'abdomen':
+        return [
+          'Release your stomach completely',
+          'Let it inflate gently as you breathe',
+          'Enjoy a deep and calm breath',
+        ];
+      case 'muslos':
+        return [
+          'Release your thigh muscles',
+          'Leave your legs completely loose',
+          'Feel the support of the seat or bed',
+        ];
+      case 'pantorrillas':
+        return [
+          'Release your ankles and relax your feet',
+          'Let your feet point naturally to the sides',
+          'Feel your calves soft and heavy',
+        ];
+      case 'pies':
+        return [
+          'Release your toes and relax the arch of your foot',
+          'Leave your feet completely loose and warm',
+          'Feel your feet free of all tension',
+        ];
+    }
+    return relaxationSteps;
+  }
+}

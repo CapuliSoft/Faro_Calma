@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gtc6/core/theme/colors.dart';
 import '../../domain/models/rmp_models.dart';
 import 'rmp_session_screen.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 enum RmpRoutine {
   cuerpoCompleto('Cuerpo Completo', 'Todas las 14 zonas musculares para una relajación profunda y total.', 14),
@@ -13,6 +14,27 @@ enum RmpRoutine {
   final String description;
   final int count;
   const RmpRoutine(this.title, this.description, this.count);
+}
+
+extension LocalizedRmpRoutine on RmpRoutine {
+  String getLocalizedTitle(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    switch (this) {
+      case RmpRoutine.cuerpoCompleto: return l10n?.rmp_routine_cuerpoCompleto_title ?? title;
+      case RmpRoutine.express: return l10n?.rmp_routine_express_title ?? title;
+      case RmpRoutine.superior: return l10n?.rmp_routine_superior_title ?? title;
+      case RmpRoutine.inferior: return l10n?.rmp_routine_inferior_title ?? title;
+    }
+  }
+  String getLocalizedDescription(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    switch (this) {
+      case RmpRoutine.cuerpoCompleto: return l10n?.rmp_routine_cuerpoCompleto_desc ?? description;
+      case RmpRoutine.express: return l10n?.rmp_routine_express_desc ?? description;
+      case RmpRoutine.superior: return l10n?.rmp_routine_superior_desc ?? description;
+      case RmpRoutine.inferior: return l10n?.rmp_routine_inferior_desc ?? description;
+    }
+  }
 }
 
 class RmpIntroScreen extends StatefulWidget {
@@ -72,32 +94,65 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Relajación Muscular',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          l10n?.rmpIntroTitle ?? 'Relajación Muscular',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
       ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 110),
           children: [
-            _buildConceptCard(isDark),
-            const SizedBox(height: 28),
-            _buildSectionHeader('1. SELECCIONAR RUTINA'),
+            Container(
+              margin: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: SensoryColors.zenTeal.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                    color: SensoryColors.zenTeal.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.accessibility_new_rounded,
+                      color: SensoryColors.zenTeal, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n?.rmpIntroBanner ?? 'La técnica de Jacobson consiste en tensar conscientemente grupos musculares y luego soltarlos...',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _buildSectionHeader(isEs ? '1. SELECCIONAR RUTINA' : '1. SELECT ROUTINE'),
             const SizedBox(height: 12),
             _buildRoutinesGrid(isDark),
             const SizedBox(height: 28),
-            _buildSectionHeader('2. SELECCIONAR DURACIÓN'),
+            _buildSectionHeader(isEs ? '2. SELECCIONAR DURACIÓN' : '2. SELECT DURATION'),
             const SizedBox(height: 12),
             _buildDurationsRow(isDark),
             const SizedBox(height: 28),
-            _buildSectionHeader('3. AUDIO GUÍA'),
+            _buildSectionHeader(isEs ? '3. AUDIO GUÍA' : '3. AUDIO GUIDE'),
             const SizedBox(height: 12),
             _buildSoundSwitchCard(isDark),
             const SizedBox(height: 36),
@@ -120,62 +175,9 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
     );
   }
 
-  Widget _buildConceptCard(bool isDark) {
-    final theme = Theme.of(context);
-    final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: SensoryColors.calmPurple.withValues(alpha: isDark ? 0.25 : 0.6),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.accessibility_new_rounded,
-              color: SensoryColors.calmPurple,
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Relajación Muscular Progresiva (RMP)',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'La RMP consiste en tensar suavemente un grupo muscular durante unos segundos y luego liberarlo por completo. Te ayuda a reconocer la tensión física del cuerpo y soltarla para inducir un estado de calma mental profundo.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildRoutinesGrid(bool isDark) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
 
     return Column(
@@ -183,29 +185,27 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
         final selected = _selectedRoutine == routine;
         return Padding(
           padding: const EdgeInsets.only(bottom: 12.0),
-          child: Container(
-            decoration: BoxDecoration(
+          child: Material(
+            color: selected
+                ? SensoryColors.primary.withValues(alpha: isDark ? 0.20 : 0.15)
+                : cardColor,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
+              side: BorderSide(
                 color: selected
                     ? SensoryColors.primary
                     : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
                 width: selected ? 2.0 : 1.0,
               ),
             ),
-            child: Material(
-              color: selected
-                  ? SensoryColors.primary.withValues(alpha: isDark ? 0.20 : 0.15)
-                  : cardColor,
-              borderRadius: BorderRadius.circular(20),
-              clipBehavior: Clip.antiAlias,
-              child: ListTile(
-                selected: selected,
-                selectedColor: SensoryColors.primary,
-                onTap: () => setState(() => _selectedRoutine = routine),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            clipBehavior: Clip.antiAlias,
+            child: ListTile(
+              selected: selected,
+              selectedColor: SensoryColors.primary,
+              onTap: () => setState(() => _selectedRoutine = routine),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               title: Text(
-                routine.title,
+                routine.getLocalizedTitle(context),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -215,7 +215,7 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
-                  routine.description,
+                  routine.getLocalizedDescription(context),
                   style: TextStyle(
                     fontSize: 12.5,
                     color: theme.textTheme.bodyMedium?.color?.withValues(alpha: selected ? 0.9 : 0.7),
@@ -232,7 +232,7 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${routine.count} zonas',
+                  '${routine.count} ${l10n?.rmpZones ?? "zonas"}',
                   style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.bold,
@@ -242,8 +242,7 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
               ),
             ),
           ),
-        ),
-      );
+        );
       }).toList(),
     );
   }
@@ -297,23 +296,25 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
   Widget _buildSoundSwitchCard(bool isDark) {
     final theme = Theme.of(context);
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
+    final l10n = AppLocalizations.of(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cardColor,
+    return Material(
+      color: cardColor,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
+        side: BorderSide(
           color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
         ),
       ),
+      clipBehavior: Clip.antiAlias,
       child: SwitchListTile(
-        title: const Text(
-          'Efectos de sonido programados',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5),
+        title: Text(
+          l10n?.rmpSoundLabel ?? 'Efectos de sonido programados',
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5),
         ),
-        subtitle: const Text(
-          'Tocar tonos auditivos al inicio de la contracción y al soltar la relajación.',
-          style: TextStyle(fontSize: 12.5),
+        subtitle: Text(
+          l10n?.rmpSoundSubtitle ?? 'Tocar tonos auditivos al inicio de la contracción y al soltar la relajación.',
+          style: const TextStyle(fontSize: 12.5),
         ),
         value: _soundEnabled,
         activeThumbColor: SensoryColors.primary,
@@ -333,9 +334,9 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
       child: ElevatedButton.icon(
         onPressed: _startRmp,
         icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
-        label: const Text(
-          'Iniciar Relajación Muscular',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+        label: Text(
+          AppLocalizations.of(context)?.rmpStartBtn ?? 'Iniciar Relajación Muscular',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: SensoryColors.primary,

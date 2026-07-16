@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gtc6/features/sound_therapy/domain/services/sound_therapy_engine.dart';
 import 'package:gtc6/features/sound_therapy/domain/models/sound_therapy_models.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
+import 'package:gtc6/core/theme/colors.dart';
 
 class SoundTherapyPlayerScreen extends StatefulWidget {
   final SoundTherapySessionConfig config;
@@ -87,15 +89,19 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
   }
 
   void _showCompletedDialog() {
+    final l10n = AppLocalizations.of(context);
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Sesión completada 🎧'),
+        title: Text(l10n?.soundTherapyTitle ?? 'Sesión completada 🎧'),
         content: Text(
-          'Terminaste tu sesión de ${widget.config.frequency.title} '
-          '(${widget.config.durationMinutes} min).',
+          isEs
+              ? 'Terminaste tu sesión de ${widget.config.frequency.title} (${widget.config.durationMinutes} min).'
+              : 'You finished your session of ${widget.config.frequency.title} (${widget.config.durationMinutes} min).',
         ),
         actions: [
           TextButton(
@@ -103,7 +109,7 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
               Navigator.of(context).pop(); // Cierra el diálogo
               Navigator.of(context).pop(); // Vuelve al selector
             },
-            child: const Text('Cerrar'),
+            child: Text(isEs ? 'Cerrar' : 'Close'),
           ),
         ],
       ),
@@ -148,7 +154,7 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Text(
-                  config.frequency.description,
+                  config.frequency.getLocalizedDescription(context),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.85),
@@ -254,6 +260,8 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
   }
 
   Widget _buildInfoCard(SoundTherapySessionConfig config) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(18),
@@ -263,9 +271,9 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
       ),
       child: Column(
         children: [
-          const Text(
-            'Encuentra una posición cómoda',
-            style: TextStyle(
+          Text(
+            isEs ? 'Encuentra una posición cómoda' : 'Find a comfortable position',
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
               fontSize: 16,
@@ -273,8 +281,9 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            'Respira naturalmente y deja que tu mente se asiente.'
-            '${config.binauralBeat != null ? " Usa auriculares para el ritmo binaural." : ""}',
+            isEs
+                ? 'Respira naturalmente y deja que tu mente se asiente.${config.binauralBeat != null ? " Usa auriculares para el ritmo binaural." : ""}'
+                : 'Breathe naturally and let your mind settle.${config.binauralBeat != null ? " Use headphones for the binaural beat." : ""}',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.85),
@@ -289,7 +298,7 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
               const Icon(Icons.timer_outlined, color: Colors.white70, size: 14),
               const SizedBox(width: 6),
               Text(
-                'Sesión de ${config.durationMinutes} min',
+                isEs ? 'Sesión de ${config.durationMinutes} min' : 'Session of ${config.durationMinutes} min',
                 style: const TextStyle(color: Colors.white70, fontSize: 12.5),
               ),
               if (config.binauralBeat != null) ...[
@@ -346,7 +355,7 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE53935),
+                backgroundColor: SensoryColors.error,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(

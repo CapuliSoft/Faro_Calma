@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gtc6/core/theme/colors.dart';
 import 'package:gtc6/features/sound_therapy/domain/models/sound_therapy_models.dart';
 import 'package:gtc6/features/sound_therapy/presentation/screens/sound_therapy_player_screen.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class SoundTherapySelectorScreen extends StatefulWidget {
   const SoundTherapySelectorScreen({super.key});
@@ -39,6 +40,8 @@ class _SoundTherapySelectorScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -47,23 +50,23 @@ class _SoundTherapySelectorScreenState
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 150),
           children: [
-            _buildSectionLabel('SELECCIONAR FRECUENCIA'),
+            _buildSectionLabel(isEs ? 'SELECCIONAR FRECUENCIA' : 'SELECT FREQUENCY'),
             const SizedBox(height: 12),
             _buildFrequencyGrid(),
             const SizedBox(height: 24),
-            _buildSectionLabel('RITMOS BINAURALES (OPCIONAL)'),
+            _buildSectionLabel(isEs ? 'RITMOS BINAURALES (OPCIONAL)' : 'BINAURAL BEATS (OPTIONAL)'),
             const SizedBox(height: 12),
             _buildBinauralRow(),
             const SizedBox(height: 24),
-            _buildSectionLabel('MODULACIÓN (OPCIONAL)'),
+            _buildSectionLabel(isEs ? 'MODULACIÓN (OPCIONAL)' : 'MODULATION (OPTIONAL)'),
             const SizedBox(height: 12),
             _buildModulationRow(),
             const SizedBox(height: 24),
-            _buildSectionLabel('DURACIÓN'),
+            _buildSectionLabel(l10n?.soundDurationLabel ?? 'DURACIÓN'),
             const SizedBox(height: 12),
             _buildDurationRow(),
             const SizedBox(height: 24),
-            _buildSectionLabel('VOLUMEN'),
+            _buildSectionLabel(l10n?.soundVolumeLabel ?? 'VOLUMEN'),
             const SizedBox(height: 12),
             _buildVolumeSlider(),
             const SizedBox(height: 24),
@@ -75,6 +78,7 @@ class _SoundTherapySelectorScreenState
   }
 
   PreferredSizeWidget _buildAppBar() {
+    final l10n = AppLocalizations.of(context);
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -84,9 +88,9 @@ class _SoundTherapySelectorScreenState
         children: [
           const Icon(Icons.graphic_eq_rounded, color: SensoryColors.secondary, size: 22),
           const SizedBox(width: 8),
-          const Text(
-            'Terapia de Sonido',
-            style: TextStyle(
+          Text(
+            l10n?.soundTherapyTitle ?? 'Terapia de Sonido',
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -176,7 +180,7 @@ class _SoundTherapySelectorScreenState
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  freq.description,
+                  freq.getLocalizedDescription(context),
                   style: TextStyle(
                     fontSize: 12.5,
                     color: selected
@@ -222,7 +226,7 @@ class _SoundTherapySelectorScreenState
       children: ModulationLevel.values.map((level) {
         final selected = _selectedModulation == level;
         return _buildPillChoice(
-          label: level.label,
+          label: level.getLocalizedLabel(context),
           selected: selected,
           color: SensoryColors.primary,
           onTap: () => setState(() => _selectedModulation = level),
@@ -334,9 +338,9 @@ class _SoundTherapySelectorScreenState
         child: ElevatedButton.icon(
           onPressed: _startSession,
           icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
-          label: const Text(
-            'Iniciar Terapia de Sonido',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+          label: Text(
+            AppLocalizations.of(context)?.soundStartBtn ?? 'Iniciar Terapia de Sonido',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: SensoryColors.primary,
@@ -352,6 +356,7 @@ class _SoundTherapySelectorScreenState
   void _showInfoDialog() {
     final theme = Theme.of(context);
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -359,23 +364,19 @@ class _SoundTherapySelectorScreenState
         backgroundColor: cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          '¿Qué es la Terapia de Sonido?',
+          l10n?.soundInfoTitle ?? '¿Qué es la Terapia de Sonido?',
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: Text(
-          'Las frecuencias Solfeggio son tonos asociados tradicionalmente con '
-          'distintos estados de bienestar. Combinadas opcionalmente con ritmos '
-          'binaurales, pueden ayudarte a relajarte, enfocarte o conciliar el sueño.\n\n'
-          'Usa auriculares para una mejor experiencia, especialmente si activas '
-          'un ritmo binaural.',
+          l10n?.soundInfoContent ?? 'La terapia de sonido utiliza frecuencias específicas para inducir estados de relajación, enfoque o sueño profundo...',
           style: TextStyle(color: theme.textTheme.bodyMedium?.color),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              'Entendido',
-              style: TextStyle(color: SensoryColors.secondary),
+            child: Text(
+              l10n?.rmpSessionFinishedBtn ?? 'Entendido',
+              style: const TextStyle(color: SensoryColors.secondary),
             ),
           ),
         ],

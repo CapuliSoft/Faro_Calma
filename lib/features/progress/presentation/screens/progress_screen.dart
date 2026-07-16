@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gtc6/core/theme/colors.dart';
 import 'package:gtc6/features/progress/domain/models/user_stats.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import 'package:gtc6/core/i18n/locale_controller.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class ProgressScreen extends StatelessWidget {
   const ProgressScreen({super.key});
@@ -73,7 +75,7 @@ class ProgressScreen extends StatelessWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE53935),
+              backgroundColor: SensoryColors.error,
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -101,7 +103,7 @@ class ProgressScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: AnimatedBuilder(
-          animation: ProgressService.instance,
+          animation: Listenable.merge([ProgressService.instance, LocaleController.instance]),
           builder: (context, _) {
             final stats = ProgressService.instance.stats;
             return ListView(
@@ -114,6 +116,8 @@ class ProgressScreen extends StatelessWidget {
                 _buildWeeklyCalendar(context, stats),
                 const SizedBox(height: 24),
                 _buildActivityBreakdown(context, stats),
+                const SizedBox(height: 24),
+                _buildLanguageSettingsCard(context),
                 const SizedBox(height: 36),
                 _buildResetButton(context),
                 const SizedBox(height: 40),
@@ -505,15 +509,150 @@ class ProgressScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildLanguageSettingsCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
+    final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+    final currentCode = LocaleController.instance.locale.languageCode;
+
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.06),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: SensoryColors.zenIndigo.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(Icons.language_rounded, color: SensoryColors.zenIndigo, size: 24),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n?.languageSettingsTitle ?? 'Idioma de la Aplicación',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n?.languageSettingsSubtitle ?? 'Elige el idioma para todas las rutinas',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: _buildLangOption(
+                  context: context,
+                  label: '🇪🇸 Español (ES)',
+                  isSelected: currentCode == 'es',
+                  onTap: () => LocaleController.instance.setLocale(const Locale('es')),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildLangOption(
+                  context: context,
+                  label: '🇺🇸 English (EN)',
+                  isSelected: currentCode == 'en',
+                  onTap: () => LocaleController.instance.setLocale(const Locale('en')),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLangOption({
+    required BuildContext context,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final activeColor = SensoryColors.primary;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? activeColor : theme.dividerColor,
+            width: isSelected ? 2.0 : 1.0,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  fontSize: 13.0,
+                  color: isSelected ? activeColor : theme.colorScheme.onSurface,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 6),
+              Icon(Icons.check_circle_rounded, size: 16, color: activeColor),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildResetButton(BuildContext context) {
     return Center(
       child: TextButton.icon(
         onPressed: () => _showResetDialog(context),
-        icon: const Icon(Icons.delete_sweep_rounded, color: Color(0xFFE53935)),
+        icon: const Icon(Icons.delete_sweep_rounded, color: SensoryColors.error),
         label: const Text(
           'Reiniciar mi progreso',
           style: TextStyle(
-            color: Color(0xFFE53935),
+            color: SensoryColors.error,
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
@@ -522,7 +661,7 @@ class ProgressScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Color(0x33E53935), width: 1.5),
+            side: BorderSide(color: SensoryColors.error.withValues(alpha: 0.2), width: 1.5),
           ),
         ),
       ),

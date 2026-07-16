@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gtc6/features/games/balls/presentation/widgets/bouncing_balls_canvas.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class BallsScreen extends StatefulWidget {
   const BallsScreen({super.key});
@@ -34,9 +35,9 @@ class _BallsScreenState extends State<BallsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Bolas Sensoriales',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)?.routineBallsTitle ?? 'Bolas Sensoriales',
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),

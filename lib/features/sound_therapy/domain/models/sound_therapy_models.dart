@@ -147,3 +147,42 @@ class SoundTherapySessionConfig {
       'SoundTherapySessionConfig(freq: ${frequency.hz}Hz, binaural: ${binauralBeat?.label ?? "ninguno"}, '
       'mod: ${modulation.label}, duración: ${durationMinutes}min, vol: ${(volume * 100).round()}%)';
 }
+
+extension LocalizedSoundFrequency on SoundFrequency {
+  String getLocalizedDescription(BuildContext context) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+    if (isEs) return description;
+    switch (hz) {
+      case 174: return 'Natural anesthetic';
+      case 396: return 'Liberation from fear and guilt';
+      case 417: return 'Facilitating change';
+      case 528: return 'Frequency of love and DNA repair';
+      case 639: return 'Harmonious relationships';
+      case 741: return 'Awakening of intuition';
+      case 852: return 'Return to spiritual order';
+      case 963: return 'Universal consciousness';
+    }
+    return description;
+  }
+}
+
+extension LocalizedModulationLevel on ModulationLevel {
+  String getLocalizedLabel(BuildContext context) {
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
+    if (isEs) {
+      switch (this) {
+        case ModulationLevel.muySutil: return 'Muy Sutil';
+        case ModulationLevel.suave: return 'Suave';
+        case ModulationLevel.moderado: return 'Moderado';
+        case ModulationLevel.fuerte: return 'Fuerte';
+      }
+    } else {
+      switch (this) {
+        case ModulationLevel.muySutil: return 'Very Subtle';
+        case ModulationLevel.suave: return 'Soft';
+        case ModulationLevel.moderado: return 'Moderate';
+        case ModulationLevel.fuerte: return 'Strong';
+      }
+    }
+  }
+}

@@ -1,13 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:gtc6/core/theme/colors.dart';
 import '../../domain/models/rmp_models.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class RmpSessionScreen extends StatefulWidget {
   final RmpSessionConfig config;
@@ -32,10 +30,6 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
   late final DateTime _startTime;
   bool _sessionLogged = false;
 
-  String? _tensionAudioUri;
-  String? _relaxationAudioUri;
-  String? _finishedAudioUri;
-
   @override
   void initState() {
     super.initState();
@@ -47,11 +41,6 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
-
-    // Pre-synthesize WAV tones in base64
-    _tensionAudioUri = 'data:audio/wav;base64,${_generateTensionChime()}';
-    _relaxationAudioUri = 'data:audio/wav;base64,${_generateRelaxationChime()}';
-    _finishedAudioUri = 'data:audio/wav;base64,${_generateFinishedChime()}';
 
     _startTimer();
     _playPhaseSound();
@@ -113,15 +102,12 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
 
   void _playPhaseSound() {
     if (!widget.config.soundEnabled) return;
-    final uri = _isTension ? _tensionAudioUri : _relaxationAudioUri;
-    if (uri != null) {
-      _audioPlayer.play(UrlSource(uri));
-    }
+    _audioPlayer.play(AssetSource('sounds/platillo.wav'));
   }
 
   void _playFinishedSound() {
-    if (!widget.config.soundEnabled || _finishedAudioUri == null) return;
-    _audioPlayer.play(UrlSource(_finishedAudioUri!));
+    if (!widget.config.soundEnabled) return;
+    _audioPlayer.play(AssetSource('sounds/platillo.wav'));
   }
 
   void _togglePause() {
@@ -152,121 +138,30 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
     }
   }
 
-  // ── Synthesizer Helpers ──
 
-  String _generateTensionChime() {
-    const sampleRate = 44100;
-    const double duration = 0.25; // 250ms
-    const numSamples = (sampleRate * duration);
-    final dataSize = (numSamples * 2).toInt();
-
-    final bytes = BytesBuilder();
-    _writeWavHeader(bytes, dataSize, sampleRate);
-
-    // Rising sweep
-    for (int i = 0; i < numSamples; i++) {
-      final t = i / sampleRate;
-      final double freq = 220.0 + (180.0 * (t / duration)); // 220Hz -> 400Hz sweep
-      final double wave = math.sin(2 * math.pi * freq * t);
-      // Smooth fade out
-      final double envelope = (1.0 - (t / duration));
-      final sample = (wave * envelope * 0.5 * 32767).toInt();
-      bytes.add(_int16ToBytes(sample));
-    }
-    return base64Encode(bytes.takeBytes());
-  }
-
-  String _generateRelaxationChime() {
-    const sampleRate = 44100;
-    const double duration = 0.35; // 350ms
-    const numSamples = (sampleRate * duration);
-    final dataSize = (numSamples * 2).toInt();
-
-    final bytes = BytesBuilder();
-    _writeWavHeader(bytes, dataSize, sampleRate);
-
-    // Descending sweep
-    for (int i = 0; i < numSamples; i++) {
-      final t = i / sampleRate;
-      final double freq = 380.0 - (200.0 * (t / duration)); // 380Hz -> 180Hz sweep
-      final double wave = math.sin(2 * math.pi * freq * t);
-      // Exponential soft decay
-      final double envelope = math.exp(-6.0 * t);
-      final sample = (wave * envelope * 0.5 * 32767).toInt();
-      bytes.add(_int16ToBytes(sample));
-    }
-    return base64Encode(bytes.takeBytes());
-  }
-
-  String _generateFinishedChime() {
-    const sampleRate = 44100;
-    const double duration = 0.6; // 600ms
-    const numSamples = (sampleRate * duration);
-    final dataSize = (numSamples * 2).toInt();
-
-    final bytes = BytesBuilder();
-    _writeWavHeader(bytes, dataSize, sampleRate);
-
-    // Major Triad Chord: C4 (261.63Hz), E4 (329.63Hz), G4 (392.00Hz)
-    for (int i = 0; i < numSamples; i++) {
-      final t = i / sampleRate;
-      final double c4 = math.sin(2 * math.pi * 261.63 * t);
-      final double e4 = math.sin(2 * math.pi * 329.63 * t);
-      final double g4 = math.sin(2 * math.pi * 392.00 * t);
-      final double chord = (c4 + e4 + g4) / 3.0;
-
-      final double envelope = math.exp(-3.5 * t);
-      final sample = (chord * envelope * 0.5 * 32767).toInt();
-      bytes.add(_int16ToBytes(sample));
-    }
-    return base64Encode(bytes.takeBytes());
-  }
-
-  void _writeWavHeader(BytesBuilder bytes, int dataSize, int sampleRate) {
-    bytes.add(utf8.encode('RIFF'));
-    bytes.add(_int32ToBytes(36 + dataSize));
-    bytes.add(utf8.encode('WAVE'));
-    bytes.add(utf8.encode('fmt '));
-    bytes.add(_int32ToBytes(16));
-    bytes.add(_int16ToBytes(1));
-    bytes.add(_int16ToBytes(1)); // Mono
-    bytes.add(_int32ToBytes(sampleRate));
-    bytes.add(_int32ToBytes(sampleRate * 2));
-    bytes.add(_int16ToBytes(2));
-    bytes.add(_int16ToBytes(16));
-    bytes.add(utf8.encode('data'));
-    bytes.add(_int32ToBytes(dataSize));
-  }
-
-  Uint8List _int32ToBytes(int val) {
-    return Uint8List(4)..buffer.asByteData().setInt32(0, val, Endian.little);
-  }
-
-  Uint8List _int16ToBytes(int val) {
-    return Uint8List(2)..buffer.asByteData().setInt16(0, val, Endian.little);
-  }
 
   void _showFinishedDialog() {
     final theme = Theme.of(context);
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
 
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Center(
+        title: Center(
           child: Text(
-            '¡Sesión Completada! 🎉',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            l10n?.rmpSessionFinished ?? '¡Relajación Completada! 🎉',
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Has completado con éxito tu rutina de Relajación Muscular Progresiva.',
+            Text(
+              l10n?.rmpSessionFinishedDesc ?? 'Has completado con éxito tu rutina de Relajación Muscular Progresiva.',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -283,7 +178,7 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
                   const Icon(Icons.check_circle_outline_rounded, color: SensoryColors.calmGreen),
                   const SizedBox(width: 8),
                   Text(
-                    '${widget.config.activeGroups.length} zonas relajadas',
+                    '${widget.config.activeGroups.length} ${l10n?.rmpZones ?? "zonas"}',
                     style: const TextStyle(fontWeight: FontWeight.bold, color: SensoryColors.calmGreen),
                   ),
                 ],
@@ -304,7 +199,7 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
                   backgroundColor: SensoryColors.primary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Entendido', style: TextStyle(color: Colors.white)),
+                child: Text(l10n?.rmpSessionFinishedBtn ?? 'Entendido', style: const TextStyle(color: Colors.white)),
               ),
             ),
           ),
@@ -325,7 +220,7 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Sesión: ${_groupIndex + 1}/${widget.config.activeGroups.length}',
+          '${AppLocalizations.of(context)?.rmpIntroTitle ?? "Sesión"}: ${_groupIndex + 1}/${widget.config.activeGroups.length}',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         backgroundColor: Colors.transparent,
@@ -350,13 +245,13 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
               child: Column(
                 children: [
                   Text(
-                    currentGroup.name,
+                    currentGroup.getLocalizedName(context),
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    currentGroup.category.toUpperCase(),
+                    currentGroup.getLocalizedCategory(context).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -405,7 +300,8 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
         : SensoryColors.calmGreen.withValues(alpha: 0.15);
     final borderColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03);
 
-    final steps = _isTension ? group.tensionSteps : group.relaxationSteps;
+    final l10n = AppLocalizations.of(context);
+    final steps = _isTension ? group.getLocalizedTensionSteps(context) : group.getLocalizedRelaxationSteps(context);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -435,7 +331,9 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
                   border: Border.all(color: activeColor.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  _isTension ? 'FASE: TENSIÓN ✊' : 'FASE: RELAJACIÓN 🍃',
+                  _isTension 
+                      ? 'FASE: ${l10n?.rmpSessionPhaseTension ?? "TENSIÓN"} ✊' 
+                      : 'FASE: ${l10n?.rmpSessionPhaseRelaxation ?? "RELAJACIÓN"} 🍃',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
@@ -505,7 +403,7 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
 
   Widget _buildBottomControlsBar(double progress) {
     final theme = Theme.of(context);
-    final activeColor = _isTension ? Colors.orangeAccent : SensoryColors.calmGreen;
+    final activeColor = _isTension ? SensoryColors.zenAmber : SensoryColors.calmGreen;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
@@ -615,7 +513,7 @@ class RmpVisualizerPainter extends CustomPainter {
       final double currentRadius = maxRadius * progressScale;
 
       final Paint corePaint = Paint()
-        ..color = Colors.orangeAccent.withValues(alpha: 0.15)
+        ..color = SensoryColors.zenAmber.withValues(alpha: 0.15)
         ..style = PaintingStyle.fill;
 
       // Draw vibrating spikes
@@ -643,7 +541,7 @@ class RmpVisualizerPainter extends CustomPainter {
 
       // Spikes border line
       final Paint borderPaint = Paint()
-        ..color = Colors.orangeAccent.withValues(alpha: 0.8)
+        ..color = SensoryColors.zenAmber.withValues(alpha: 0.8)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0
         ..strokeCap = StrokeCap.round;
@@ -651,7 +549,7 @@ class RmpVisualizerPainter extends CustomPainter {
 
       // Inward arrows (imploding force)
       final Paint arrowPaint = Paint()
-        ..color = Colors.orangeAccent.withValues(alpha: 0.4)
+        ..color = SensoryColors.zenAmber.withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.8;
 

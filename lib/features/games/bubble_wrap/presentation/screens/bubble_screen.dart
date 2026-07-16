@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:gtc6/core/theme/colors.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class BubbleData {
   final int id;
@@ -213,11 +214,13 @@ class _BubbleScreenState extends State<BubbleScreen> {
     final isDark = theme.brightness == Brightness.dark;
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
 
+    final l10n = AppLocalizations.of(context);
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Pop-It / Burbujas',
-          style: TextStyle(
+        title: Text(
+          l10n?.routineBubblesTitle ?? 'Pop-It / Burbujas',
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -235,7 +238,7 @@ class _BubbleScreenState extends State<BubbleScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Toca para explotar',
+                isEs ? 'Toca para explotar' : 'Tap to pop',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -309,9 +312,9 @@ class _BubbleScreenState extends State<BubbleScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _resetBubbles,
                   icon: const Icon(Icons.refresh_rounded, color: Colors.white),
-                  label: const Text(
-                    'Reiniciar burbujas',
-                    style: TextStyle(
+                  label: Text(
+                    isEs ? 'Reiniciar burbujas' : 'Reset bubbles',
+                    style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -331,16 +334,15 @@ class _BubbleScreenState extends State<BubbleScreen> {
               const SizedBox(height: 16),
 
               // Configuration card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: cardColor,
+              Material(
+                color: cardColor,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
+                  side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
                 ),
-                child: Material(
-                  color: Colors.transparent,
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: Column(
                     children: [
                       // Sound toggle
@@ -355,8 +357,8 @@ class _BubbleScreenState extends State<BubbleScreen> {
                               color: _soundEnabled ? SensoryColors.primary : theme.textTheme.bodyMedium?.color,
                             ),
                             const SizedBox(width: 10),
-                            Text(
-                              'Sonido de explosión',
+                             Text(
+                              l10n?.popitSoundOption ?? 'Sonido de explosión',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -385,8 +387,8 @@ class _BubbleScreenState extends State<BubbleScreen> {
                               color: _regenerativeMode ? SensoryColors.primary : theme.textTheme.bodyMedium?.color,
                             ),
                             const SizedBox(width: 10),
-                            Text(
-                              'Burbujas infinitas',
+                             Text(
+                              l10n?.popitInfiniteOption ?? 'Burbujas infinitas',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -418,7 +420,9 @@ class _BubbleScreenState extends State<BubbleScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  _synthTypeSoft ? 'Sonido: Burbuja suave' : 'Sonido: Pop clásico',
+                                  isEs
+                                      ? (_synthTypeSoft ? 'Sonido: Burbuja suave' : 'Sonido: Pop clásico')
+                                      : (_synthTypeSoft ? 'Sound: Soft bubble' : 'Sound: Classic pop'),
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,

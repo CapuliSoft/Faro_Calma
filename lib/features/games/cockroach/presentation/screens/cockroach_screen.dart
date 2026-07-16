@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gtc6/core/theme/colors.dart';
 import '../widgets/cockroach_canvas.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import 'package:gtc6/l10n/app_localizations.dart';
 
 class CockroachScreen extends StatefulWidget {
   const CockroachScreen({super.key});
@@ -49,13 +50,14 @@ class _CockroachScreenState extends State<CockroachScreen> {
     final isDark = theme.brightness == Brightness.dark;
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
     final borderColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03);
+    final isEs = Localizations.localeOf(context).languageCode == 'es';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Cucaracha Aplastada',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)?.routineCockroachTitle ?? 'Cucaracha Aplastada',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -75,7 +77,7 @@ class _CockroachScreenState extends State<CockroachScreen> {
                   border: Border.all(color: SensoryColors.primary.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  'Aplastadas: $_score',
+                  isEs ? 'Aplastadas: $_score' : 'Smashed: $_score',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -121,7 +123,7 @@ class _CockroachScreenState extends State<CockroachScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                '¡Toca las cucarachas que corren para aplastarlas!',
+                isEs ? '¡Toca las cucarachas que corren para aplastarlas!' : 'Tap the running cockroaches to smash them!',
                 style: TextStyle(
                   fontSize: 13.5,
                   fontStyle: FontStyle.italic,
@@ -157,9 +159,9 @@ class _CockroachScreenState extends State<CockroachScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Velocidad',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SensoryColors.secondary),
+                            Text(
+                              isEs ? 'Velocidad' : 'Speed',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SensoryColors.secondary),
                             ),
                             Slider(
                               value: _speed,
@@ -184,9 +186,9 @@ class _CockroachScreenState extends State<CockroachScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Cucarachas',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SensoryColors.secondary),
+                            Text(
+                              isEs ? 'Cucarachas' : 'Cockroaches',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SensoryColors.secondary),
                             ),
                             Slider(
                               value: _maxRoaches.toDouble(),
@@ -215,9 +217,9 @@ class _CockroachScreenState extends State<CockroachScreen> {
                     child: OutlinedButton.icon(
                       onPressed: _resetGame,
                       icon: const Icon(Icons.refresh_rounded, color: SensoryColors.secondary),
-                      label: const Text(
-                        'Limpiar Pantalla',
-                        style: TextStyle(
+                      label: Text(
+                        isEs ? 'Limpiar Pantalla' : 'Reset Screen',
+                        style: const TextStyle(
                           color: SensoryColors.secondary,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
