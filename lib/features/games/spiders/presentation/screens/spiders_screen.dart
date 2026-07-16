@@ -34,7 +34,7 @@ class _SpidersScreenState extends State<SpidersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Arañas Relajantes',
+          'Telaraña Interactiva',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
