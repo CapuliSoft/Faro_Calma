@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gtc6/core/theme/colors.dart';
@@ -32,8 +33,11 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
   bool _showImmersiveToolbar = false;
 
   /// Position offset for the draggable floating panel in immersive mode
-  /// Starts at mid-right; dy is set dynamically on first build
+  /// Starts at mid-right; position is set dynamically on first build
   Offset? _floatingPanelOffset;
+
+  /// Position offset for the draggable tool bar (PaintToolbar) in immersive mode
+  Offset? _floatingToolbarOffset;
 
   /// Key for capturing the canvas as a PNG image
   final GlobalKey _canvasBoundaryKey = GlobalKey();
@@ -564,111 +568,170 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
             if (_immersiveMode)
               Builder(builder: (context) {
                 final screenSize = MediaQuery.of(context).size;
-                _floatingPanelOffset ??= Offset(8, screenSize.height / 2 - 140);
+                _floatingPanelOffset ??= Offset(screenSize.width - 58, screenSize.height / 2 - 140);
                 final offset = _floatingPanelOffset!;
                 return Positioned(
+                  left: offset.dx,
                   top: offset.dy,
-                  right: offset.dx,
                   child: GestureDetector(
                     onPanUpdate: (details) {
                       setState(() {
+                        final current = _floatingPanelOffset ?? Offset(screenSize.width - 58, screenSize.height / 2 - 140);
                         _floatingPanelOffset = Offset(
-                          (offset.dx - details.delta.dx).clamp(0.0, screenSize.width - 60),
-                          (offset.dy + details.delta.dy).clamp(0.0, screenSize.height - 300),
+                          (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 54),
+                          (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 280),
                         );
                       });
                     },
-                  child: FadeTransition(
-                    opacity: _immersiveAnim,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-                      decoration: BoxDecoration(
-                        color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.black.withValues(alpha: 0.06),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Drag handle
-                          Container(
-                            width: 24,
-                            height: 4,
-                            margin: const EdgeInsets.only(bottom: 6),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.3)
-                                  : Colors.black.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(2),
+                    child: FadeTransition(
+                      opacity: _immersiveAnim,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                        decoration: BoxDecoration(
+                          color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.55),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : Colors.black.withValues(alpha: 0.08),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                          _buildFloatingButton(
-                            icon: Icons.fullscreen_exit_rounded,
-                            tooltip: isEs ? 'Salir del Modo Pro' : 'Exit Pro Mode',
-                            onTap: _toggleImmersiveMode,
-                          ),
-                          const SizedBox(height: 6),
-                          _buildFloatingButton(
-                            icon: _showImmersiveToolbar
-                                ? Icons.brush_rounded
-                                : Icons.brush_outlined,
-                            tooltip: isEs ? 'Herramientas' : 'Tools',
-                            onTap: () => setState(() => _showImmersiveToolbar = !_showImmersiveToolbar),
-                            isActive: _showImmersiveToolbar,
-                          ),
-                          const SizedBox(height: 6),
-                          _buildFloatingButton(
-                            icon: Icons.save_alt_rounded,
-                            tooltip: isEs ? 'Guardar PNG' : 'Save PNG',
-                            onTap: _completedStrokes.isNotEmpty ? _exportToPng : null,
-                          ),
-                          const SizedBox(height: 6),
-                          _buildFloatingButton(
-                            icon: Icons.undo_rounded,
-                            tooltip: isEs ? 'Deshacer' : 'Undo',
-                            onTap: _completedStrokes.isNotEmpty ? _undo : null,
-                          ),
-                          const SizedBox(height: 6),
-                          _buildFloatingButton(
-                            icon: Icons.arrow_back_ios_new_rounded,
-                            tooltip: isEs ? 'Salir' : 'Back',
-                            onTap: _confirmExit,
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Drag handle
+                            Container(
+                              width: 24,
+                              height: 4,
+                              margin: const EdgeInsets.only(bottom: 6),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.4)
+                                    : Colors.black.withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            _buildFloatingButton(
+                              icon: Icons.fullscreen_exit_rounded,
+                              tooltip: isEs ? 'Salir del Modo Pro' : 'Exit Pro Mode',
+                              onTap: _toggleImmersiveMode,
+                            ),
+                            const SizedBox(height: 6),
+                            _buildFloatingButton(
+                              icon: _showImmersiveToolbar
+                                  ? Icons.brush_rounded
+                                  : Icons.brush_outlined,
+                              tooltip: isEs ? 'Herramientas' : 'Tools',
+                              onTap: () => setState(() => _showImmersiveToolbar = !_showImmersiveToolbar),
+                              isActive: _showImmersiveToolbar,
+                            ),
+                            const SizedBox(height: 6),
+                            _buildFloatingButton(
+                              icon: Icons.save_alt_rounded,
+                              tooltip: isEs ? 'Guardar PNG' : 'Save PNG',
+                              onTap: _completedStrokes.isNotEmpty ? _exportToPng : null,
+                            ),
+                            const SizedBox(height: 6),
+                            _buildFloatingButton(
+                              icon: Icons.undo_rounded,
+                              tooltip: isEs ? 'Deshacer' : 'Undo',
+                              onTap: _completedStrokes.isNotEmpty ? _undo : null,
+                            ),
+                            const SizedBox(height: 6),
+                            _buildFloatingButton(
+                              icon: Icons.arrow_back_ios_new_rounded,
+                              tooltip: isEs ? 'Salir' : 'Back',
+                              onTap: _confirmExit,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
                 );
               }),
-            // ── Floating toolbar in immersive mode ──
+
+            // ── Draggable floating toolbar (PaintToolbar) in immersive mode ──
             if (_immersiveMode && _showImmersiveToolbar)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: FadeTransition(
-                  opacity: _immersiveAnim,
-                  child: PaintToolbar(
-                    selectedColor: _selectedColor,
-                    onColorChanged: (color) => setState(() => _selectedColor = color),
-                    isEraser: _isEraser,
-                    onEraserChanged: (isEraser) => setState(() => _isEraser = isEraser),
-                    strokeWidth: _strokeWidth,
-                    onStrokeWidthChanged: (width) => setState(() => _strokeWidth = width),
-                    strokeOpacity: _strokeOpacity,
-                    onStrokeOpacityChanged: (opacity) => setState(() => _strokeOpacity = opacity),
-                    onUndo: _undo,
-                    onClear: _clearCanvas,
-                    canUndo: _completedStrokes.isNotEmpty,
-                    canClear: _completedStrokes.isNotEmpty,
+              Builder(builder: (context) {
+                final screenSize = MediaQuery.of(context).size;
+                _floatingToolbarOffset ??= Offset(math.max(12.0, (screenSize.width - 350) / 2), screenSize.height - 180);
+                final offset = _floatingToolbarOffset!;
+                return Positioned(
+                  left: offset.dx,
+                  top: offset.dy,
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      setState(() {
+                        final current = _floatingToolbarOffset ?? Offset(math.max(12.0, (screenSize.width - 350) / 2), screenSize.height - 180);
+                        _floatingToolbarOffset = Offset(
+                          (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 80),
+                          (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 80),
+                        );
+                      });
+                    },
+                    child: FadeTransition(
+                      opacity: _immersiveAnim,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.65),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.15)
+                                : Colors.black.withValues(alpha: 0.1),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 15,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Drag handle bar
+                            Container(
+                              width: 36,
+                              height: 4,
+                              margin: const EdgeInsets.only(top: 8, bottom: 2),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.4)
+                                    : Colors.black.withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            PaintToolbar(
+                              selectedColor: _selectedColor,
+                              onColorChanged: (color) => setState(() => _selectedColor = color),
+                              isEraser: _isEraser,
+                              onEraserChanged: (isEraser) => setState(() => _isEraser = isEraser),
+                              strokeWidth: _strokeWidth,
+                              onStrokeWidthChanged: (width) => setState(() => _strokeWidth = width),
+                              strokeOpacity: _strokeOpacity,
+                              onStrokeOpacityChanged: (opacity) => setState(() => _strokeOpacity = opacity),
+                              onUndo: _undo,
+                              onClear: _clearCanvas,
+                              canUndo: _completedStrokes.isNotEmpty,
+                              canClear: _completedStrokes.isNotEmpty,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              }),
           ],
         ),
       ),
