@@ -573,51 +573,55 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                 return Positioned(
                   left: offset.dx,
                   top: offset.dy,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      setState(() {
-                        final current = _floatingPanelOffset ?? Offset(screenSize.width - 58, screenSize.height / 2 - 140);
-                        _floatingPanelOffset = Offset(
-                          (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 54),
-                          (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 280),
-                        );
-                      });
-                    },
-                    child: FadeTransition(
-                      opacity: _immersiveAnim,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.55),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.12)
-                                : Colors.black.withValues(alpha: 0.08),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                  child: FadeTransition(
+                    opacity: _immersiveAnim,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                      decoration: BoxDecoration(
+                        color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.12)
+                              : Colors.black.withValues(alpha: 0.08),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Drag handle
-                            Container(
-                              width: 24,
-                              height: 4,
-                              margin: const EdgeInsets.only(bottom: 6),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.4)
-                                    : Colors.black.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Drag handle
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onPanUpdate: (details) {
+                              setState(() {
+                                final current = _floatingPanelOffset ?? Offset(screenSize.width - 58, screenSize.height / 2 - 140);
+                                _floatingPanelOffset = Offset(
+                                  (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 54),
+                                  (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 280),
+                                );
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4, bottom: 10, left: 10, right: 10),
+                              child: Container(
+                                width: 24,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.4)
+                                      : Colors.black.withValues(alpha: 0.3),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
                               ),
                             ),
+                          ),
                             _buildFloatingButton(
                               icon: Icons.fullscreen_exit_rounded,
                               tooltip: isEs ? 'Salir del Modo Pro' : 'Exit Pro Mode',
@@ -667,50 +671,54 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                 return Positioned(
                   left: offset.dx,
                   top: offset.dy,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      setState(() {
-                        final current = _floatingToolbarOffset ?? Offset(math.max(12.0, (screenSize.width - 350) / 2), screenSize.height - 180);
-                        _floatingToolbarOffset = Offset(
-                          (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 80),
-                          (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 80),
-                        );
-                      });
-                    },
-                    child: FadeTransition(
-                      opacity: _immersiveAnim,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.65),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.15)
-                                : Colors.black.withValues(alpha: 0.1),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 15,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
+                  child: FadeTransition(
+                    opacity: _immersiveAnim,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.65),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : Colors.black.withValues(alpha: 0.1),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Drag handle bar
-                            Container(
-                              width: 36,
-                              height: 4,
-                              margin: const EdgeInsets.only(top: 8, bottom: 2),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.4)
-                                    : Colors.black.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 15,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Drag handle bar
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onPanUpdate: (details) {
+                              setState(() {
+                                final current = _floatingToolbarOffset ?? Offset(math.max(12.0, (screenSize.width - 350) / 2), screenSize.height - 180);
+                                _floatingToolbarOffset = Offset(
+                                  (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 80),
+                                  (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 80),
+                                );
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 4, left: 20, right: 20),
+                              child: Container(
+                                width: 36,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.4)
+                                      : Colors.black.withValues(alpha: 0.3),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
                               ),
                             ),
+                          ),
                             PaintToolbar(
                               selectedColor: _selectedColor,
                               onColorChanged: (color) => setState(() => _selectedColor = color),
