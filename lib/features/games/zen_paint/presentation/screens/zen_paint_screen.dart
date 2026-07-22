@@ -658,8 +658,7 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                         ),
                       ),
                     ),
-                  ),
-                );
+                  );
               }),
 
             // ── Draggable floating toolbar (PaintToolbar) in immersive mode ──
@@ -674,6 +673,7 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                   child: FadeTransition(
                     opacity: _immersiveAnim,
                     child: Container(
+                      width: math.min(360, screenSize.width - 40),
                       decoration: BoxDecoration(
                         color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.65),
                         borderRadius: BorderRadius.circular(20),
@@ -737,8 +737,7 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                         ),
                       ),
                     ),
-                  ),
-                );
+                  );
               }),
           ],
         ),
