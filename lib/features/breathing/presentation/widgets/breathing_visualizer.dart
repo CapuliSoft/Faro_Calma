@@ -133,19 +133,27 @@ class BreathingVisualizerPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     for (int i = 0; i < numPetals; i++) {
-      final double angle = (i * 2 * math.pi / numPetals) + (pulseValue * 2 * math.pi);
+      final double angle =
+          (i * 2 * math.pi / numPetals) + (pulseValue * 2 * math.pi);
       final double petalDist = currentRadius * 0.86;
-      final Offset pos = center + Offset(math.cos(angle) * petalDist, math.sin(angle) * petalDist);
+      final Offset pos =
+          center +
+          Offset(math.cos(angle) * petalDist, math.sin(angle) * petalDist);
       canvas.drawCircle(pos, 4.5, petalPaint);
     }
 
     // Inner breathing ripple ring during hold phases
-    if (phaseType == BreathingPhaseType.holdIn || phaseType == BreathingPhaseType.holdOut) {
+    if (phaseType == BreathingPhaseType.holdIn ||
+        phaseType == BreathingPhaseType.holdOut) {
       final Paint holdRipplePaint = Paint()
         ..color = Colors.white.withValues(alpha: 0.4 * (1.0 - pulseValue))
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.8;
-      canvas.drawCircle(center, currentRadius * (0.6 + 0.4 * pulseValue), holdRipplePaint);
+      canvas.drawCircle(
+        center,
+        currentRadius * (0.6 + 0.4 * pulseValue),
+        holdRipplePaint,
+      );
     }
   }
 

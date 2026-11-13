@@ -12,7 +12,8 @@ class CockroachScreen extends StatefulWidget {
 }
 
 class _CockroachScreenState extends State<CockroachScreen> {
-  final GlobalKey<CockroachCanvasState> _canvasKey = GlobalKey<CockroachCanvasState>();
+  final GlobalKey<CockroachCanvasState> _canvasKey =
+      GlobalKey<CockroachCanvasState>();
   late final DateTime _startTime;
   int _score = 0;
 
@@ -28,7 +29,8 @@ class _CockroachScreenState extends State<CockroachScreen> {
 
   @override
   void dispose() {
-    final double elapsedMinutes = DateTime.now().difference(_startTime).inSeconds / 60.0;
+    final double elapsedMinutes =
+        DateTime.now().difference(_startTime).inSeconds / 60.0;
     if (elapsedMinutes >= 0.05) {
       Future.microtask(() {
         ProgressService.instance.recordSession('cockroach', elapsedMinutes);
@@ -49,14 +51,17 @@ class _CockroachScreenState extends State<CockroachScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.03);
     final isEs = Localizations.localeOf(context).languageCode == 'es';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)?.routineCockroachTitle ?? 'Cucaracha Aplastada',
+          AppLocalizations.of(context)?.routineCockroachTitle ??
+              'Cucaracha Aplastada',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -70,11 +75,16 @@ class _CockroachScreenState extends State<CockroachScreen> {
             padding: const EdgeInsets.only(right: 16.0),
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: SensoryColors.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: SensoryColors.primary.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: SensoryColors.primary.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Text(
                   isEs ? 'Aplastadas: $_score' : 'Smashed: $_score',
@@ -100,7 +110,10 @@ class _CockroachScreenState extends State<CockroachScreen> {
                     image: const AssetImage('assets/images/kitchen_floor.jpg'),
                     fit: BoxFit.cover,
                     colorFilter: Theme.of(context).brightness == Brightness.dark
-                        ? ColorFilter.mode(Colors.black.withValues(alpha: 0.35), BlendMode.darken)
+                        ? ColorFilter.mode(
+                            Colors.black.withValues(alpha: 0.35),
+                            BlendMode.darken,
+                          )
                         : null,
                   ),
                 ),
@@ -123,7 +136,9 @@ class _CockroachScreenState extends State<CockroachScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                isEs ? '¡Toca las cucarachas que corren para aplastarlas!' : 'Tap the running cockroaches to smash them!',
+                isEs
+                    ? '¡Toca las cucarachas que corren para aplastarlas!'
+                    : 'Tap the running cockroaches to smash them!',
                 style: TextStyle(
                   fontSize: 13.5,
                   fontStyle: FontStyle.italic,
@@ -143,7 +158,9 @@ class _CockroachScreenState extends State<CockroachScreen> {
                 border: Border.all(color: borderColor),
                 boxShadow: [
                   BoxShadow(
-                    color: isDark ? Colors.black.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.02),
+                    color: isDark
+                        ? Colors.black.withValues(alpha: 0.15)
+                        : Colors.black.withValues(alpha: 0.02),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -161,7 +178,11 @@ class _CockroachScreenState extends State<CockroachScreen> {
                           children: [
                             Text(
                               isEs ? 'Velocidad' : 'Speed',
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SensoryColors.secondary),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: SensoryColors.secondary,
+                              ),
                             ),
                             Slider(
                               value: _speed,
@@ -188,7 +209,11 @@ class _CockroachScreenState extends State<CockroachScreen> {
                           children: [
                             Text(
                               isEs ? 'Cucarachas' : 'Cockroaches',
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SensoryColors.secondary),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: SensoryColors.secondary,
+                              ),
                             ),
                             Slider(
                               value: _maxRoaches.toDouble(),
@@ -216,7 +241,10 @@ class _CockroachScreenState extends State<CockroachScreen> {
                     height: 48,
                     child: OutlinedButton.icon(
                       onPressed: _resetGame,
-                      icon: const Icon(Icons.refresh_rounded, color: SensoryColors.secondary),
+                      icon: const Icon(
+                        Icons.refresh_rounded,
+                        color: SensoryColors.secondary,
+                      ),
                       label: Text(
                         isEs ? 'Limpiar Pantalla' : 'Reset Screen',
                         style: const TextStyle(
@@ -226,7 +254,10 @@ class _CockroachScreenState extends State<CockroachScreen> {
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: SensoryColors.secondary.withValues(alpha: 0.3), width: 1.5),
+                        side: BorderSide(
+                          color: SensoryColors.secondary.withValues(alpha: 0.3),
+                          width: 1.5,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),

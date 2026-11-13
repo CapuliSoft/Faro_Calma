@@ -108,9 +108,9 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
       final noise = (random.nextDouble() * 2 - 1) * 0.15;
 
       final sample = ((wave1 + wave2 + noise) * 0.4 * 32767).toInt().clamp(
-            -32768,
-            32767,
-          );
+        -32768,
+        32767,
+      );
       bytes.add(_int16ToBytes(sample));
     }
 
@@ -118,11 +118,11 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
   }
 
   List<int> _int32ToBytes(int value) => [
-        value & 0xFF,
-        (value >> 8) & 0xFF,
-        (value >> 16) & 0xFF,
-        (value >> 24) & 0xFF,
-      ];
+    value & 0xFF,
+    (value >> 8) & 0xFF,
+    (value >> 16) & 0xFF,
+    (value >> 24) & 0xFF,
+  ];
 
   List<int> _int16ToBytes(int value) => [value & 0xFF, (value >> 8) & 0xFF];
 
@@ -160,7 +160,10 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
         DateTime.now().difference(_startTime).inSeconds / 60.0;
     if (elapsedMinutes >= 0.05) {
       Future.microtask(() {
-        ProgressService.instance.recordSession('fidget_spinner', elapsedMinutes);
+        ProgressService.instance.recordSession(
+          'fidget_spinner',
+          elapsedMinutes,
+        );
       });
     }
     super.dispose();
@@ -201,8 +204,7 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
     });
   }
 
-  double get _currentRpm =>
-      (_angularVelocity.abs() / (2 * math.pi)) * 60 * 60;
+  double get _currentRpm => (_angularVelocity.abs() / (2 * math.pi)) * 60 * 60;
 
   @override
   Widget build(BuildContext context) {
@@ -211,11 +213,17 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
     final l10n = AppLocalizations.of(context);
     final isEs = Localizations.localeOf(context).languageCode == 'es';
 
-    final bgColor = isDark ? SensoryColors.backgroundDark : SensoryColors.background;
+    final bgColor = isDark
+        ? SensoryColors.backgroundDark
+        : SensoryColors.background;
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
 
     final speedPercent = (_angularVelocity.abs() / 1.5).clamp(0.0, 1.0);
-    final speedColor = Color.lerp(SensoryColors.zenTeal, SensoryColors.zenAmber, speedPercent)!;
+    final speedColor = Color.lerp(
+      SensoryColors.zenTeal,
+      SensoryColors.zenAmber,
+      speedPercent,
+    )!;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -266,9 +274,7 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
               decoration: BoxDecoration(
                 color: speedColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: speedColor.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: speedColor.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -351,16 +357,24 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
                     child: OutlinedButton.icon(
                       onPressed: _toggleAudio,
                       icon: Icon(
-                        _audioEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                        _audioEnabled
+                            ? Icons.volume_up_rounded
+                            : Icons.volume_off_rounded,
                         size: 18,
-                        color: _audioEnabled ? SensoryColors.primary : theme.colorScheme.onSurface,
+                        color: _audioEnabled
+                            ? SensoryColors.primary
+                            : theme.colorScheme.onSurface,
                       ),
                       label: Text(
-                        _audioEnabled ? (isEs ? 'Sonido' : 'Sound') : (isEs ? 'Mudo' : 'Mute'),
+                        _audioEnabled
+                            ? (isEs ? 'Sonido' : 'Sound')
+                            : (isEs ? 'Mudo' : 'Mute'),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: _audioEnabled ? SensoryColors.primary : theme.colorScheme.onSurface,
+                          color: _audioEnabled
+                              ? SensoryColors.primary
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
@@ -368,7 +382,9 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
                         side: BorderSide(
                           color: _audioEnabled
                               ? SensoryColors.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                              : theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.2,
+                                ),
                           width: 1.5,
                         ),
                         shape: RoundedRectangleBorder(
@@ -395,7 +411,9 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         side: BorderSide(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.2,
+                          ),
                           width: 1.5,
                         ),
                         shape: RoundedRectangleBorder(
@@ -412,7 +430,11 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
                     flex: 2,
                     child: ElevatedButton.icon(
                       onPressed: _impulse,
-                      icon: const Icon(Icons.bolt_rounded, size: 20, color: Colors.white),
+                      icon: const Icon(
+                        Icons.bolt_rounded,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                       label: Text(
                         isEs ? '⚡ Impulso' : '⚡ Boost',
                         style: const TextStyle(
@@ -453,9 +475,7 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.04),
@@ -481,7 +501,9 @@ class _FidgetSpinnerScreenState extends State<FidgetSpinnerScreen>
             label,
             style: TextStyle(
               fontSize: 11,
-              color: isDark ? SensoryColors.textLightSecondary : SensoryColors.textLight,
+              color: isDark
+                  ? SensoryColors.textLightSecondary
+                  : SensoryColors.textLight,
             ),
           ),
         ],
@@ -519,8 +541,16 @@ class _SpinnerWidget extends StatelessWidget {
     )!;
 
     final primaryGradient = isDark
-        ? [const Color(0xFF3A4A54), const Color(0xFF556B78), const Color(0xFF2C3E50)]
-        : [const Color(0xFFB0BEC5), const Color(0xFF78909C), const Color(0xFF546E7A)];
+        ? [
+            const Color(0xFF3A4A54),
+            const Color(0xFF556B78),
+            const Color(0xFF2C3E50),
+          ]
+        : [
+            const Color(0xFFB0BEC5),
+            const Color(0xFF78909C),
+            const Color(0xFF546E7A),
+          ];
 
     final centerGradient = isDark
         ? [const Color(0xFF4A5A68), const Color(0xFF37474F)]

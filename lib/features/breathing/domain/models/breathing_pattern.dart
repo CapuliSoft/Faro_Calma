@@ -3,10 +3,26 @@ import 'package:gtc6/core/theme/colors.dart';
 import 'package:gtc6/l10n/app_localizations.dart';
 
 enum BreathingPhaseType {
-  inhale('Inhalar', 'inhalación profunda y suave por la nariz', Icons.arrow_upward_rounded),
-  holdIn('Sostener', 'mantén el aire con calma en los pulmones', Icons.pause_circle_outline_rounded),
-  exhale('Exhalar', 'libera el aire lenta y controladamente', Icons.arrow_downward_rounded),
-  holdOut('Pausa', 'descansa con los pulmones vacíos en quietud', Icons.stop_circle_outlined);
+  inhale(
+    'Inhalar',
+    'inhalación profunda y suave por la nariz',
+    Icons.arrow_upward_rounded,
+  ),
+  holdIn(
+    'Sostener',
+    'mantén el aire con calma en los pulmones',
+    Icons.pause_circle_outline_rounded,
+  ),
+  exhale(
+    'Exhalar',
+    'libera el aire lenta y controladamente',
+    Icons.arrow_downward_rounded,
+  ),
+  holdOut(
+    'Pausa',
+    'descansa con los pulmones vacíos en quietud',
+    Icons.stop_circle_outlined,
+  );
 
   final String label;
   final String description;
@@ -80,7 +96,8 @@ final List<BreathingPattern> kBreathingPatterns = [
       BreathingPhase(
         type: BreathingPhaseType.exhale,
         durationSeconds: 8,
-        instruction: 'Exhala por la boca haciendo un suave sonido de soplido...',
+        instruction:
+            'Exhala por la boca haciendo un suave sonido de soplido...',
       ),
     ],
   ),
@@ -159,12 +176,14 @@ final List<BreathingPattern> kBreathingPatterns = [
       BreathingPhase(
         type: BreathingPhaseType.inhale,
         durationSeconds: 1,
-        instruction: '¡Inhala un sorbo extra rápido de aire por la nariz para llenar al máximo!',
+        instruction:
+            '¡Inhala un sorbo extra rápido de aire por la nariz para llenar al máximo!',
       ),
       BreathingPhase(
         type: BreathingPhaseType.exhale,
         durationSeconds: 6,
-        instruction: 'Exhala largo, relajado y continuo por la boca soltando todo...',
+        instruction:
+            'Exhala largo, relajado y continuo por la boca soltando todo...',
       ),
     ],
   ),
@@ -218,7 +237,8 @@ extension LocalizedBreathingPattern on BreathingPattern {
     final l10n = AppLocalizations.of(context);
     if (id == '4-7-8') return l10n?.breathing_478_benefit ?? scientificBenefit;
     if (id == 'box') return l10n?.breathing_box_benefit ?? scientificBenefit;
-    if (id == 'coherent') return l10n?.breathing_coherent_benefit ?? scientificBenefit;
+    if (id == 'coherent')
+      return l10n?.breathing_coherent_benefit ?? scientificBenefit;
     if (id == 'sigh') return l10n?.breathing_sigh_benefit ?? scientificBenefit;
     if (id == '4-6') return l10n?.breathing_46_benefit ?? scientificBenefit;
     return scientificBenefit;
@@ -239,26 +259,38 @@ extension LocalizedBreathingPhaseType on BreathingPhaseType {
   String getLocalizedLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (this) {
-      case BreathingPhaseType.inhale: return l10n?.phaseInhaleLabel ?? label;
-      case BreathingPhaseType.holdIn: return l10n?.phaseHoldInLabel ?? label;
-      case BreathingPhaseType.exhale: return l10n?.phaseExhaleLabel ?? label;
-      case BreathingPhaseType.holdOut: return l10n?.phaseHoldOutLabel ?? label;
+      case BreathingPhaseType.inhale:
+        return l10n?.phaseInhaleLabel ?? label;
+      case BreathingPhaseType.holdIn:
+        return l10n?.phaseHoldInLabel ?? label;
+      case BreathingPhaseType.exhale:
+        return l10n?.phaseExhaleLabel ?? label;
+      case BreathingPhaseType.holdOut:
+        return l10n?.phaseHoldOutLabel ?? label;
     }
   }
 
   String getLocalizedDescription(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (this) {
-      case BreathingPhaseType.inhale: return l10n?.phaseInhaleDesc ?? description;
-      case BreathingPhaseType.holdIn: return l10n?.phaseHoldInDesc ?? description;
-      case BreathingPhaseType.exhale: return l10n?.phaseExhaleDesc ?? description;
-      case BreathingPhaseType.holdOut: return l10n?.phaseHoldOutDesc ?? description;
+      case BreathingPhaseType.inhale:
+        return l10n?.phaseInhaleDesc ?? description;
+      case BreathingPhaseType.holdIn:
+        return l10n?.phaseHoldInDesc ?? description;
+      case BreathingPhaseType.exhale:
+        return l10n?.phaseExhaleDesc ?? description;
+      case BreathingPhaseType.holdOut:
+        return l10n?.phaseHoldOutDesc ?? description;
     }
   }
 }
 
 extension LocalizedBreathingPhase on BreathingPhase {
-  String getLocalizedInstruction(BuildContext context, String patternId, int phaseIndex) {
+  String getLocalizedInstruction(
+    BuildContext context,
+    String patternId,
+    int phaseIndex,
+  ) {
     final l10n = AppLocalizations.of(context);
     if (patternId == '4-7-8') {
       if (phaseIndex == 0) return l10n?.breathing_478_phase_1 ?? instruction;
@@ -272,8 +304,10 @@ extension LocalizedBreathingPhase on BreathingPhase {
       if (phaseIndex == 3) return l10n?.breathing_box_phase_4 ?? instruction;
     }
     if (patternId == 'coherent') {
-      if (phaseIndex == 0) return l10n?.breathing_coherent_phase_1 ?? instruction;
-      if (phaseIndex == 1) return l10n?.breathing_coherent_phase_2 ?? instruction;
+      if (phaseIndex == 0)
+        return l10n?.breathing_coherent_phase_1 ?? instruction;
+      if (phaseIndex == 1)
+        return l10n?.breathing_coherent_phase_2 ?? instruction;
     }
     if (patternId == 'sigh') {
       if (phaseIndex == 0) return l10n?.breathing_sigh_phase_1 ?? instruction;

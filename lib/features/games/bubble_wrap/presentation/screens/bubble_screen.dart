@@ -40,7 +40,8 @@ class _BubbleScreenState extends State<BubbleScreen> {
 
   // ── Experience Controls ──────────────────────────────────────────
   bool _soundEnabled = true;
-  bool _synthTypeSoft = true; // Programmatic audio variations instead of external assets
+  bool _synthTypeSoft =
+      true; // Programmatic audio variations instead of external assets
   bool _regenerativeMode = false;
 
   late final DateTime _startTime;
@@ -54,7 +55,8 @@ class _BubbleScreenState extends State<BubbleScreen> {
 
   @override
   void dispose() {
-    final double elapsedMinutes = DateTime.now().difference(_startTime).inSeconds / 60.0;
+    final double elapsedMinutes =
+        DateTime.now().difference(_startTime).inSeconds / 60.0;
     if (elapsedMinutes >= 0.05) {
       Future.microtask(() {
         ProgressService.instance.recordSession('popit', elapsedMinutes);
@@ -92,9 +94,11 @@ class _BubbleScreenState extends State<BubbleScreen> {
   // ── Programmatic Audio Synthesizer (Fast & Asset-free) ───────────
   String _generatePopSound({required bool softType}) {
     const sampleRate = 44100;
-    final double duration = softType ? 0.06 : 0.12; // 60ms (ultra fast) or 120ms (bubble)
+    final double duration = softType
+        ? 0.06
+        : 0.12; // 60ms (ultra fast) or 120ms (bubble)
     final numSamples = (sampleRate * duration);
-    
+
     // Frequency sweeps for bubble effects
     final double startFrequency = softType ? 450.0 : 250.0;
     final double endFrequency = softType ? 900.0 : 800.0;
@@ -123,12 +127,16 @@ class _BubbleScreenState extends State<BubbleScreen> {
 
     for (int i = 0; i < numSamples; i++) {
       final t = i / sampleRate;
-      final freq = startFrequency + ((endFrequency - startFrequency) * (t / duration));
+      final freq =
+          startFrequency + ((endFrequency - startFrequency) * (t / duration));
       // Fast exponential envelope decay
       final envelope = math.exp((softType ? -40.0 : -25.0) * t);
       final wave = math.sin(2 * math.pi * freq * t);
-      
-      final sample = (wave * envelope * 0.8 * 32767).toInt().clamp(-32768, 32767);
+
+      final sample = (wave * envelope * 0.8 * 32767).toInt().clamp(
+        -32768,
+        32767,
+      );
       bytes.add(_int16ToBytes(sample));
     }
 
@@ -152,7 +160,7 @@ class _BubbleScreenState extends State<BubbleScreen> {
       await _audioPlayer.stop();
       final uri = _generatePopSound(softType: _synthTypeSoft);
       await _audioPlayer.setSource(UrlSource(uri));
-      
+
       // Pitch variation for variety
       final pitch = 0.92 + (math.Random().nextDouble() * 0.16); // 0.92 to 1.08
       await _audioPlayer.setPlaybackRate(pitch);
@@ -220,9 +228,7 @@ class _BubbleScreenState extends State<BubbleScreen> {
       appBar: AppBar(
         title: Text(
           l10n?.routineBubblesTitle ?? 'Pop-It / Burbujas',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -255,7 +261,9 @@ class _BubbleScreenState extends State<BubbleScreen> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: isDark ? Colors.black.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.03),
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.15)
+                          : Colors.black.withValues(alpha: 0.03),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -265,11 +273,17 @@ class _BubbleScreenState extends State<BubbleScreen> {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     const spacing = 12.0;
-                    final maxBubbleSize = (constraints.maxWidth - ((_cols - 1) * spacing)) / _cols;
-                    final bubbleSize = maxBubbleSize.clamp(38.0, 54.0).toDouble();
-                    
-                    final gridWidth = (_cols * bubbleSize) + ((_cols - 1) * spacing);
-                    final gridHeight = (_rows * bubbleSize) + ((_rows - 1) * spacing);
+                    final maxBubbleSize =
+                        (constraints.maxWidth - ((_cols - 1) * spacing)) /
+                        _cols;
+                    final bubbleSize = maxBubbleSize
+                        .clamp(38.0, 54.0)
+                        .toDouble();
+
+                    final gridWidth =
+                        (_cols * bubbleSize) + ((_cols - 1) * spacing);
+                    final gridHeight =
+                        (_rows * bubbleSize) + ((_rows - 1) * spacing);
 
                     return Center(
                       child: SizedBox(
@@ -338,31 +352,46 @@ class _BubbleScreenState extends State<BubbleScreen> {
                 color: cardColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
+                  side: BorderSide(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : Colors.black.withValues(alpha: 0.03),
+                  ),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   child: Column(
                     children: [
                       // Sound toggle
                       SwitchListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
                         dense: true,
                         title: Row(
                           children: [
                             Icon(
-                              _soundEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                              _soundEnabled
+                                  ? Icons.volume_up_rounded
+                                  : Icons.volume_off_rounded,
                               size: 20,
-                              color: _soundEnabled ? SensoryColors.primary : theme.textTheme.bodyMedium?.color,
+                              color: _soundEnabled
+                                  ? SensoryColors.primary
+                                  : theme.textTheme.bodyMedium?.color,
                             ),
                             const SizedBox(width: 10),
-                             Text(
+                            Text(
                               l10n?.popitSoundOption ?? 'Sonido de explosión',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: _soundEnabled ? theme.colorScheme.onSurface : theme.textTheme.bodyMedium?.color,
+                                color: _soundEnabled
+                                    ? theme.colorScheme.onSurface
+                                    : theme.textTheme.bodyMedium?.color,
                               ),
                             ),
                           ],
@@ -377,22 +406,28 @@ class _BubbleScreenState extends State<BubbleScreen> {
                       ),
                       // Infinite mode toggle
                       SwitchListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
                         dense: true,
                         title: Row(
                           children: [
                             Icon(
                               Icons.autorenew_rounded,
                               size: 20,
-                              color: _regenerativeMode ? SensoryColors.primary : theme.textTheme.bodyMedium?.color,
+                              color: _regenerativeMode
+                                  ? SensoryColors.primary
+                                  : theme.textTheme.bodyMedium?.color,
                             ),
                             const SizedBox(width: 10),
-                             Text(
+                            Text(
                               l10n?.popitInfiniteOption ?? 'Burbujas infinitas',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: _regenerativeMode ? theme.colorScheme.onSurface : theme.textTheme.bodyMedium?.color,
+                                color: _regenerativeMode
+                                    ? theme.colorScheme.onSurface
+                                    : theme.textTheme.bodyMedium?.color,
                               ),
                             ),
                           ],
@@ -408,21 +443,29 @@ class _BubbleScreenState extends State<BubbleScreen> {
                       // Sound Type toggle (Programmatic sound variation)
                       if (_soundEnabled)
                         SwitchListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                          ),
                           dense: true,
                           title: Row(
                             children: [
                               Icon(
                                 Icons.audiotrack_rounded,
                                 size: 20,
-                                color: _synthTypeSoft ? SensoryColors.primary : theme.textTheme.bodyMedium?.color,
+                                color: _synthTypeSoft
+                                    ? SensoryColors.primary
+                                    : theme.textTheme.bodyMedium?.color,
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                   isEs
-                                      ? (_synthTypeSoft ? 'Sonido: Burbuja suave' : 'Sonido: Pop clásico')
-                                      : (_synthTypeSoft ? 'Sound: Soft bubble' : 'Sound: Classic pop'),
+                                      ? (_synthTypeSoft
+                                            ? 'Sonido: Burbuja suave'
+                                            : 'Sonido: Pop clásico')
+                                      : (_synthTypeSoft
+                                            ? 'Sound: Soft bubble'
+                                            : 'Sound: Classic pop'),
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,

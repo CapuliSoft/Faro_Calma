@@ -42,9 +42,7 @@ List<WebThread> buildFunnelWeb({
     for (int c = 0; c < cols; c++) {
       threads.add(WebThread(p1: grid[layer][c], p2: grid[layer + 1][c]));
       if (c < cols - 1) {
-        threads.add(
-          WebThread(p1: grid[layer][c], p2: grid[layer + 1][c + 1]),
-        );
+        threads.add(WebThread(p1: grid[layer][c], p2: grid[layer + 1][c + 1]));
       }
     }
   }

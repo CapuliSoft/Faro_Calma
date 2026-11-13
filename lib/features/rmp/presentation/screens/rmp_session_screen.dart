@@ -52,7 +52,8 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
     _pulseController.dispose();
     _audioPlayer.dispose();
     if (!_sessionLogged) {
-      final double elapsedMinutes = DateTime.now().difference(_startTime).inSeconds / 60.0;
+      final double elapsedMinutes =
+          DateTime.now().difference(_startTime).inSeconds / 60.0;
       if (elapsedMinutes >= 0.05) {
         Future.microtask(() {
           ProgressService.instance.recordSession('rmp', elapsedMinutes);
@@ -95,7 +96,10 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
       _timer?.cancel();
       _playFinishedSound();
       _sessionLogged = true;
-      ProgressService.instance.recordSession('rmp', widget.config.totalDurationSeconds / 60.0);
+      ProgressService.instance.recordSession(
+        'rmp',
+        widget.config.totalDurationSeconds / 60.0,
+      );
       _showFinishedDialog();
     }
   }
@@ -138,8 +142,6 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
     }
   }
 
-
-
   void _showFinishedDialog() {
     final theme = Theme.of(context);
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
@@ -161,7 +163,8 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              l10n?.rmpSessionFinishedDesc ?? 'Has completado con éxito tu rutina de Relajación Muscular Progresiva.',
+              l10n?.rmpSessionFinishedDesc ??
+                  'Has completado con éxito tu rutina de Relajación Muscular Progresiva.',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -170,16 +173,24 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
               decoration: BoxDecoration(
                 color: SensoryColors.calmGreen.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: SensoryColors.calmGreen.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: SensoryColors.calmGreen.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.check_circle_outline_rounded, color: SensoryColors.calmGreen),
+                  const Icon(
+                    Icons.check_circle_outline_rounded,
+                    color: SensoryColors.calmGreen,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     '${widget.config.activeGroups.length} ${l10n?.rmpZones ?? "zonas"}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: SensoryColors.calmGreen),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: SensoryColors.calmGreen,
+                    ),
                   ),
                 ],
               ),
@@ -197,9 +208,14 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: SensoryColors.primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: Text(l10n?.rmpSessionFinishedBtn ?? 'Entendido', style: const TextStyle(color: Colors.white)),
+                child: Text(
+                  l10n?.rmpSessionFinishedBtn ?? 'Entendido',
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
@@ -231,7 +247,9 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
         ),
         actions: [
           IconButton(
-            icon: Icon(_isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded),
+            icon: Icon(
+              _isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+            ),
             onPressed: _togglePause,
           ),
         ],
@@ -241,13 +259,19 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
           children: [
             // Muscle group info
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 children: [
                   Text(
                     currentGroup.getLocalizedName(context),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -294,14 +318,20 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
   Widget _buildGuideCard(MuscleGroup group, bool isDark) {
     final theme = Theme.of(context);
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final activeColor = _isTension ? Colors.orangeAccent : SensoryColors.calmGreen;
-    final activeBg = _isTension 
+    final activeColor = _isTension
+        ? Colors.orangeAccent
+        : SensoryColors.calmGreen;
+    final activeBg = _isTension
         ? Colors.orangeAccent.withValues(alpha: 0.12)
         : SensoryColors.calmGreen.withValues(alpha: 0.15);
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.03);
 
     final l10n = AppLocalizations.of(context);
-    final steps = _isTension ? group.getLocalizedTensionSteps(context) : group.getLocalizedRelaxationSteps(context);
+    final steps = _isTension
+        ? group.getLocalizedTensionSteps(context)
+        : group.getLocalizedRelaxationSteps(context);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -312,7 +342,9 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
         border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.02),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.02),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -324,15 +356,18 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: activeBg,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: activeColor.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  _isTension 
-                      ? 'FASE: ${l10n?.rmpSessionPhaseTension ?? "TENSIÓN"} ✊' 
+                  _isTension
+                      ? 'FASE: ${l10n?.rmpSessionPhaseTension ?? "TENSIÓN"} ✊'
                       : 'FASE: ${l10n?.rmpSessionPhaseRelaxation ?? "RELAJACIÓN"} 🍃',
                   style: TextStyle(
                     fontSize: 11,
@@ -403,7 +438,9 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
 
   Widget _buildBottomControlsBar(double progress) {
     final theme = Theme.of(context);
-    final activeColor = _isTension ? SensoryColors.zenAmber : SensoryColors.calmGreen;
+    final activeColor = _isTension
+        ? SensoryColors.zenAmber
+        : SensoryColors.calmGreen;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
@@ -431,11 +468,16 @@ class _RmpSessionScreenState extends State<RmpSessionScreen>
               ),
               Text(
                 'Fase ${_isTension ? "Tensión" : "Relajación"}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13.5,
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.arrow_forward_ios_rounded, size: 20),
-                onPressed: _groupIndex < widget.config.activeGroups.length - 1 ? _skipNext : null,
+                onPressed: _groupIndex < widget.config.activeGroups.length - 1
+                    ? _skipNext
+                    : null,
                 tooltip: 'Siguiente Grupo',
               ),
             ],
@@ -480,10 +522,7 @@ class RmpVisualizer extends StatelessWidget {
             ),
           ),
           // Large floating emoji
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 54),
-          ),
+          Text(emoji, style: const TextStyle(fontSize: 54)),
         ],
       ),
     );
@@ -509,7 +548,8 @@ class RmpVisualizerPainter extends CustomPainter {
     if (isTension) {
       // ✊ Tension: Contracting, spikey orange/amber sphere.
       // As progress approaches 1.0, it contracts more and spikes shake faster.
-      final double progressScale = 1.0 - (progress * 0.25); // shrinks up to 75% size
+      final double progressScale =
+          1.0 - (progress * 0.25); // shrinks up to 75% size
       final double currentRadius = maxRadius * progressScale;
 
       final Paint corePaint = Paint()
@@ -519,12 +559,14 @@ class RmpVisualizerPainter extends CustomPainter {
       // Draw vibrating spikes
       final Path spikePath = Path();
       const int numSpikes = 36;
-      final double vibrationSpeed = 10.0 + (progress * 15.0); // shakes faster as tension builds
+      final double vibrationSpeed =
+          10.0 + (progress * 15.0); // shakes faster as tension builds
       final double vibrationAmp = 3.0 + (progress * 5.0);
 
       for (int i = 0; i <= numSpikes; i++) {
         final double angle = (i * 2 * math.pi / numSpikes);
-        final double offset = math.sin(angle * 6 + pulseValue * vibrationSpeed) * vibrationAmp;
+        final double offset =
+            math.sin(angle * 6 + pulseValue * vibrationSpeed) * vibrationAmp;
         final double r = currentRadius + offset;
 
         final double x = center.dx + math.cos(angle) * r;
@@ -559,21 +601,42 @@ class RmpVisualizerPainter extends CustomPainter {
         final double startDist = maxRadius * 0.9;
         final double endDist = currentRadius + 6;
 
-        final Offset start = center + Offset(math.cos(angle) * startDist, math.sin(angle) * startDist);
-        final Offset end = center + Offset(math.cos(angle) * endDist, math.sin(angle) * endDist);
+        final Offset start =
+            center +
+            Offset(math.cos(angle) * startDist, math.sin(angle) * startDist);
+        final Offset end =
+            center +
+            Offset(math.cos(angle) * endDist, math.sin(angle) * endDist);
 
         canvas.drawLine(start, end, arrowPaint);
 
         // Arrow head pointing inward
         final double headAngle1 = angle + math.pi - 0.45;
         final double headAngle2 = angle + math.pi + 0.45;
-        canvas.drawLine(end, end + Offset(math.cos(headAngle1) * arrowLength * 0.6, math.sin(headAngle1) * arrowLength * 0.6), arrowPaint);
-        canvas.drawLine(end, end + Offset(math.cos(headAngle2) * arrowLength * 0.6, math.sin(headAngle2) * arrowLength * 0.6), arrowPaint);
+        canvas.drawLine(
+          end,
+          end +
+              Offset(
+                math.cos(headAngle1) * arrowLength * 0.6,
+                math.sin(headAngle1) * arrowLength * 0.6,
+              ),
+          arrowPaint,
+        );
+        canvas.drawLine(
+          end,
+          end +
+              Offset(
+                math.cos(headAngle2) * arrowLength * 0.6,
+                math.sin(headAngle2) * arrowLength * 0.6,
+              ),
+          arrowPaint,
+        );
       }
     } else {
       // 🍃 Relaxation: Expanding, breathing mint/blue sphere with floating particles.
       // Pulse value (0.0 to 1.0 reverse) controls the smooth slow breathing scale.
-      final double breathScale = 0.8 + (pulseValue * 0.15); // breaths between 80% and 95%
+      final double breathScale =
+          0.8 + (pulseValue * 0.15); // breaths between 80% and 95%
       final double currentRadius = maxRadius * breathScale;
 
       final Paint corePaint = Paint()
@@ -591,7 +654,9 @@ class RmpVisualizerPainter extends CustomPainter {
 
       // Outward waves (expanding energy)
       final Paint wavePaint = Paint()
-        ..color = SensoryColors.calmGreen.withValues(alpha: 0.25 - (pulseValue * 0.15))
+        ..color = SensoryColors.calmGreen.withValues(
+          alpha: 0.25 - (pulseValue * 0.15),
+        )
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5;
       canvas.drawCircle(center, currentRadius + 14 * pulseValue, wavePaint);
@@ -605,7 +670,12 @@ class RmpVisualizerPainter extends CustomPainter {
       for (int i = 0; i < 6; i++) {
         final double angle = (i * 2 * math.pi / 6) + (pulseValue * 0.5);
         final double bubbleDist = currentRadius * 0.75 + (i * 4 * pulseValue);
-        final Offset bubblePos = center + Offset(math.cos(angle) * bubbleDist, math.sin(angle) * bubbleDist - (10 * pulseValue));
+        final Offset bubblePos =
+            center +
+            Offset(
+              math.cos(angle) * bubbleDist,
+              math.sin(angle) * bubbleDist - (10 * pulseValue),
+            );
         canvas.drawCircle(bubblePos, 3.5 + (i % 3), bubblePaint);
       }
     }

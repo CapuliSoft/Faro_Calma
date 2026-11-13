@@ -104,13 +104,23 @@ class _SpidersCanvasState extends State<SpidersCanvas>
     _threads.clear();
     switch (type) {
       case WebType.circular:
-        _threads.addAll(buildCircularWeb(center: _webCenter, canvasSize: _canvasSize));
+        _threads.addAll(
+          buildCircularWeb(center: _webCenter, canvasSize: _canvasSize),
+        );
         break;
       case WebType.chaotic:
-        _threads.addAll(buildChaoticWeb(center: _webCenter, canvasSize: _canvasSize, random: _random));
+        _threads.addAll(
+          buildChaoticWeb(
+            center: _webCenter,
+            canvasSize: _canvasSize,
+            random: _random,
+          ),
+        );
         break;
       case WebType.funnel:
-        _threads.addAll(buildFunnelWeb(center: _webCenter, canvasSize: _canvasSize));
+        _threads.addAll(
+          buildFunnelWeb(center: _webCenter, canvasSize: _canvasSize),
+        );
         break;
     }
   }
@@ -161,7 +171,10 @@ class _SpidersCanvasState extends State<SpidersCanvas>
           spider.state = SpiderState.idle;
           break;
         }
-        broken.repairProgress = (broken.repairProgress + _repairSpeed).clamp(0.0, 1.0);
+        broken.repairProgress = (broken.repairProgress + _repairSpeed).clamp(
+          0.0,
+          1.0,
+        );
         if (broken.repairProgress >= 1.0) {
           broken.broken = false;
           spider.repairTarget = null;
@@ -204,7 +217,10 @@ class _SpidersCanvasState extends State<SpidersCanvas>
   void _handlePanUpdate(DragUpdateDetails d) {
     final current = d.localPosition;
     final last = _lastFingerPos;
-    if (last == null) { _lastFingerPos = current; return; }
+    if (last == null) {
+      _lastFingerPos = current;
+      return;
+    }
 
     bool broke = false;
     for (final thread in _threads) {
@@ -241,7 +257,10 @@ class _SpidersCanvasState extends State<SpidersCanvas>
 
   void _destroyAll() {
     setState(() {
-      for (final t in _threads) { t.broken = true; t.repairProgress = 0.0; }
+      for (final t in _threads) {
+        t.broken = true;
+        t.repairProgress = 0.0;
+      }
     });
     HapticFeedback.heavyImpact();
   }
@@ -275,11 +294,29 @@ class _SpidersCanvasState extends State<SpidersCanvas>
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
           child: Row(
             children: [
-              Expanded(child: WebTypeButton(label: isEs ? '🕸 Circular' : '🕸 Circular', selected: _currentType == WebType.circular, onTap: () => _selectWebType(WebType.circular))),
+              Expanded(
+                child: WebTypeButton(
+                  label: isEs ? '🕸 Circular' : '🕸 Circular',
+                  selected: _currentType == WebType.circular,
+                  onTap: () => _selectWebType(WebType.circular),
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: WebTypeButton(label: isEs ? '🕷 Caótica' : '🕷 Chaotic', selected: _currentType == WebType.chaotic, onTap: () => _selectWebType(WebType.chaotic))),
+              Expanded(
+                child: WebTypeButton(
+                  label: isEs ? '🕷 Caótica' : '🕷 Chaotic',
+                  selected: _currentType == WebType.chaotic,
+                  onTap: () => _selectWebType(WebType.chaotic),
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: WebTypeButton(label: isEs ? '🔻 Embudo' : '🔻 Funnel', selected: _currentType == WebType.funnel, onTap: () => _selectWebType(WebType.funnel))),
+              Expanded(
+                child: WebTypeButton(
+                  label: isEs ? '🔻 Embudo' : '🔻 Funnel',
+                  selected: _currentType == WebType.funnel,
+                  onTap: () => _selectWebType(WebType.funnel),
+                ),
+              ),
             ],
           ),
         ),
@@ -321,7 +358,10 @@ class _SpidersCanvasState extends State<SpidersCanvas>
               final newSize = Size(constraints.maxWidth, constraints.maxHeight);
               if (_canvasSize != newSize) {
                 _canvasSize = newSize;
-                _webCenter = Offset(_canvasSize.width / 2, _canvasSize.height / 2 - 30);
+                _webCenter = Offset(
+                  _canvasSize.width / 2,
+                  _canvasSize.height / 2 - 30,
+                );
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) {
                     setState(() {
@@ -359,12 +399,28 @@ class _SpidersCanvasState extends State<SpidersCanvas>
             children: [
               Expanded(
                 child: Text(
-                  isEs ? '✋ Desliza para romper hilos. La araña los reparará.' : '✋ Swipe to break threads. The spider will repair them.',
-                  style: TextStyle(color: theme.textTheme.bodySmall?.color, fontSize: 12, fontStyle: FontStyle.italic),
+                  isEs
+                      ? '✋ Desliza para romper hilos. La araña los reparará.'
+                      : '✋ Swipe to break threads. The spider will repair them.',
+                  style: TextStyle(
+                    color: theme.textTheme.bodySmall?.color,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
-              IconButton(tooltip: isEs ? 'Destruir toda la tela' : 'Destroy all web', icon: const Icon(Icons.flash_on_rounded, size: 20), color: SensoryColors.zenAmber, onPressed: _destroyAll),
-              IconButton(tooltip: isEs ? 'Reiniciar' : 'Reset', icon: const Icon(Icons.refresh_rounded, size: 20), color: theme.colorScheme.onSurface, onPressed: _resetWeb),
+              IconButton(
+                tooltip: isEs ? 'Destruir toda la tela' : 'Destroy all web',
+                icon: const Icon(Icons.flash_on_rounded, size: 20),
+                color: SensoryColors.zenAmber,
+                onPressed: _destroyAll,
+              ),
+              IconButton(
+                tooltip: isEs ? 'Reiniciar' : 'Reset',
+                icon: const Icon(Icons.refresh_rounded, size: 20),
+                color: theme.colorScheme.onSurface,
+                onPressed: _resetWeb,
+              ),
             ],
           ),
         ),

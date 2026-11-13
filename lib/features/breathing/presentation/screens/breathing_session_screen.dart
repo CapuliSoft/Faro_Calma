@@ -164,7 +164,8 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              l10n?.breathingSessionFinishedDesc ?? 'Has completado la rutina de respiración científica. Tu sistema nervioso está más regulado y en equilibrio.',
+              l10n?.breathingSessionFinishedDesc ??
+                  'Has completado la rutina de respiración científica. Tu sistema nervioso está más regulado y en equilibrio.',
               textAlign: TextAlign.center,
               style: const TextStyle(height: 1.4),
             ),
@@ -175,7 +176,8 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
                 color: widget.pattern.color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                    color: widget.pattern.color.withValues(alpha: 0.3)),
+                  color: widget.pattern.color.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -206,10 +208,16 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: SensoryColors.primary,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: Text(l10n?.breathingSessionFinishedBtn ?? 'Volver a Inicio',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                child: Text(
+                  l10n?.breathingSessionFinishedBtn ?? 'Volver a Inicio',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
@@ -222,8 +230,7 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final double phaseProgress =
-        1.0 - (_phaseSecondsLeft / _phaseTotalSeconds);
+    final double phaseProgress = 1.0 - (_phaseSecondsLeft / _phaseTotalSeconds);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -240,11 +247,17 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
         ),
         actions: [
           IconButton(
-            icon: Icon(_isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded),
+            icon: Icon(
+              _isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+            ),
             onPressed: _togglePause,
-            tooltip: _isPaused 
-                ? (AppLocalizations.of(context)?.localeName == 'es' ? 'Reanudar' : 'Resume') 
-                : (AppLocalizations.of(context)?.localeName == 'es' ? 'Pausar' : 'Pause'),
+            tooltip: _isPaused
+                ? (AppLocalizations.of(context)?.localeName == 'es'
+                      ? 'Reanudar'
+                      : 'Resume')
+                : (AppLocalizations.of(context)?.localeName == 'es'
+                      ? 'Pausar'
+                      : 'Pause'),
           ),
         ],
       ),
@@ -253,13 +266,19 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
           children: [
             // Pattern info header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 children: [
                   Text(
                     widget.pattern.getLocalizedName(context),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -329,7 +348,10 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
                       color: widget.pattern.color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_currentPhase.type.icon, color: widget.pattern.color),
+                    child: Icon(
+                      _currentPhase.type.icon,
+                      color: widget.pattern.color,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -346,10 +368,16 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _currentPhase.getLocalizedInstruction(context, widget.pattern.id, _phaseIndex),
+                          _currentPhase.getLocalizedInstruction(
+                            context,
+                            widget.pattern.id,
+                            _phaseIndex,
+                          ),
                           style: TextStyle(
                             fontSize: 13,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.85,
+                            ),
                             height: 1.3,
                           ),
                         ),
@@ -368,11 +396,14 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: LinearProgressIndicator(
-                      value: (_phaseIndex + phaseProgress) /
+                      value:
+                          (_phaseIndex + phaseProgress) /
                           widget.pattern.phases.length,
                       minHeight: 8,
                       backgroundColor: theme.scaffoldBackgroundColor,
-                      valueColor: AlwaysStoppedAnimation<Color>(widget.pattern.color),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        widget.pattern.color,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -381,7 +412,10 @@ class _BreathingSessionScreenState extends State<BreathingSessionScreen>
                     children: [
                       Text(
                         'Fase ${_phaseIndex + 1} de ${widget.pattern.phases.length}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
                       ),
                       TextButton.icon(
                         onPressed: _skipNextPhase,

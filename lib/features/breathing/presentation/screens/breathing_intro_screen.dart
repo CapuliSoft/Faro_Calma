@@ -55,7 +55,8 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)?.breathingIntroTitle ?? 'Respiración Científica',
+          AppLocalizations.of(context)?.breathingIntroTitle ??
+              'Respiración Científica',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -78,19 +79,26 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                 color: SensoryColors.calmGreen.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                    color: SensoryColors.calmGreen.withValues(alpha: 0.3)),
+                  color: SensoryColors.calmGreen.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.biotech_rounded,
-                      color: SensoryColors.calmGreen, size: 28),
+                  const Icon(
+                    Icons.biotech_rounded,
+                    color: SensoryColors.calmGreen,
+                    size: 28,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      AppLocalizations.of(context)?.breathingIntroBanner ?? 'Patrones con aval neurocientífico para estimular el nervio vago...',
+                      AppLocalizations.of(context)?.breathingIntroBanner ??
+                          'Patrones con aval neurocientífico para estimular el nervio vago...',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.9,
+                        ),
                         height: 1.3,
                       ),
                     ),
@@ -119,15 +127,18 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? pattern.color.withValues(alpha: isDark ? 0.25 : 0.18)
-                            : theme.cardTheme.color ?? theme.colorScheme.surface,
+                            ? pattern.color.withValues(
+                                alpha: isDark ? 0.25 : 0.18,
+                              )
+                            : theme.cardTheme.color ??
+                                  theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isSelected
                               ? pattern.color
                               : (isDark
-                                  ? Colors.white.withValues(alpha: 0.06)
-                                  : Colors.black.withValues(alpha: 0.05)),
+                                    ? Colors.white.withValues(alpha: 0.06)
+                                    : Colors.black.withValues(alpha: 0.05)),
                           width: isSelected ? 2.5 : 1.0,
                         ),
                         boxShadow: [
@@ -142,8 +153,7 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(pattern.icon,
-                              color: pattern.color, size: 30),
+                          Icon(pattern.icon, color: pattern.color, size: 30),
                           const Spacer(),
                           Text(
                             pattern.name,
@@ -160,7 +170,9 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                             '${pattern.cycleDurationSeconds}s/ciclo',
                             style: TextStyle(
                               fontSize: 11,
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
                             ),
                           ),
                         ],
@@ -193,9 +205,13 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: _selectedPattern.color.withValues(alpha: 0.15),
+                              color: _selectedPattern.color.withValues(
+                                alpha: 0.15,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -208,8 +224,11 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                             ),
                           ),
                           const Spacer(),
-                          Icon(Icons.timer_outlined,
-                              size: 16, color: _selectedPattern.color),
+                          Icon(
+                            Icons.timer_outlined,
+                            size: 16,
+                            color: _selectedPattern.color,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             '~${((_selectedPattern.cycleDurationSeconds * _selectedCycles) / 60).toStringAsFixed(1)} min',
@@ -240,7 +259,8 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        AppLocalizations.of(context)?.breathingBenefitLabel ?? 'Avalo Científico y Beneficios:',
+                        AppLocalizations.of(context)?.breathingBenefitLabel ??
+                            'Avalo Científico y Beneficios:',
                         style: const TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.bold,
@@ -251,7 +271,9 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                         _selectedPattern.getLocalizedBenefit(context),
                         style: TextStyle(
                           fontSize: 13,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.85,
+                          ),
                           height: 1.4,
                         ),
                       ),
@@ -261,7 +283,8 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
 
                       // Phase breakdown pills
                       Text(
-                        AppLocalizations.of(context)?.breathingStructureLabel ?? 'Estructura del Patrón:',
+                        AppLocalizations.of(context)?.breathingStructureLabel ??
+                            'Estructura del Patrón:',
                         style: const TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.bold,
@@ -274,16 +297,23 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                         children: _selectedPattern.phases.map((phase) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
-                              color: _selectedPattern.color.withValues(alpha: 0.1),
+                              color: _selectedPattern.color.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(phase.type.icon,
-                                    size: 16, color: _selectedPattern.color),
+                                Icon(
+                                  phase.type.icon,
+                                  size: 16,
+                                  color: _selectedPattern.color,
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   '${phase.type.getLocalizedLabel(context)}: ${phase.durationSeconds}s',
@@ -308,14 +338,21 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            AppLocalizations.of(context)?.breathingCyclesLabel ?? 'Ciclos de respiración:',
+                            AppLocalizations.of(
+                                  context,
+                                )?.breathingCyclesLabel ??
+                                'Ciclos de respiración:',
                             style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 14),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.remove_circle_outline_rounded),
+                                icon: const Icon(
+                                  Icons.remove_circle_outline_rounded,
+                                ),
                                 color: _selectedPattern.color,
                                 onPressed: _selectedCycles > 1
                                     ? () => setState(() => _selectedCycles--)
@@ -324,10 +361,14 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                               Text(
                                 '$_selectedCycles',
                                 style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.add_circle_outline_rounded),
+                                icon: const Icon(
+                                  Icons.add_circle_outline_rounded,
+                                ),
                                 color: _selectedPattern.color,
                                 onPressed: _selectedCycles < 20
                                     ? () => setState(() => _selectedCycles++)
@@ -345,8 +386,13 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                             children: [
                               const Icon(Icons.volume_up_rounded, size: 20),
                               const SizedBox(width: 8),
-                              Text(AppLocalizations.of(context)?.breathingSoundLabel ?? 'Sonido guía (Platillo)',
-                                  style: const TextStyle(fontSize: 13.5)),
+                              Text(
+                                AppLocalizations.of(
+                                      context,
+                                    )?.breathingSoundLabel ??
+                                    'Sonido guía (Platillo)',
+                                style: const TextStyle(fontSize: 13.5),
+                              ),
                             ],
                           ),
                           Switch(
@@ -363,8 +409,13 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                             children: [
                               const Icon(Icons.vibration_rounded, size: 20),
                               const SizedBox(width: 8),
-                              Text(AppLocalizations.of(context)?.breathingHapticLabel ?? 'Vibración suave al cambiar',
-                                  style: const TextStyle(fontSize: 13.5)),
+                              Text(
+                                AppLocalizations.of(
+                                      context,
+                                    )?.breathingHapticLabel ??
+                                    'Vibración suave al cambiar',
+                                style: const TextStyle(fontSize: 13.5),
+                              ),
                             ],
                           ),
                           Switch(
@@ -400,11 +451,15 @@ class _BreathingIntroScreenState extends State<BreathingIntroScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.play_arrow_rounded,
-                          color: Colors.white, size: 26),
+                      const Icon(
+                        Icons.play_arrow_rounded,
+                        color: Colors.white,
+                        size: 26,
+                      ),
                       const SizedBox(width: 8),
                       Text(
-                        AppLocalizations.of(context)?.breathingStartBtn ?? 'Comenzar Respiración',
+                        AppLocalizations.of(context)?.breathingStartBtn ??
+                            'Comenzar Respiración',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,

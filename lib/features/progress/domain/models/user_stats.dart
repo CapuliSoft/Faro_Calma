@@ -51,14 +51,17 @@ class UserStats {
       longestStreak: json['longestStreak'] ?? 0,
       totalPlaytimeMinutes: (json['totalPlaytimeMinutes'] ?? 0.0).toDouble(),
       totalSessions: json['totalSessions'] ?? 0,
-      activityCounts: Map<String, int>.from(json['activityCounts'] ?? {
-        'balls': 0,
-        'popit': 0,
-        'spiders': 0,
-        'sound_therapy': 0,
-        'cockroach': 0,
-        'rmp': 0,
-      }),
+      activityCounts: Map<String, int>.from(
+        json['activityCounts'] ??
+            {
+              'balls': 0,
+              'popit': 0,
+              'spiders': 0,
+              'sound_therapy': 0,
+              'cockroach': 0,
+              'rmp': 0,
+            },
+      ),
     );
   }
 

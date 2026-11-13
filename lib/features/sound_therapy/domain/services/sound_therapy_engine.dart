@@ -134,8 +134,14 @@ class RealSoundEngine implements SoundTherapyEngine {
       final am = 1.0 - modDepth + modDepth * sin(2 * pi * _modRate * t);
       final amp = _volume * am * 32767.0;
 
-      final sampleL = (sin(2 * pi * freqL * t) * amp).round().clamp(-32767, 32767);
-      final sampleR = (sin(2 * pi * freqR * t) * amp).round().clamp(-32767, 32767);
+      final sampleL = (sin(2 * pi * freqL * t) * amp).round().clamp(
+        -32767,
+        32767,
+      );
+      final sampleR = (sin(2 * pi * freqR * t) * amp).round().clamp(
+        -32767,
+        32767,
+      );
 
       samples[i * 2] = sampleL;
       samples[i * 2 + 1] = sampleR;

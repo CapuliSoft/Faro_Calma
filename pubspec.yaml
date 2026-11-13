@@ -37,6 +37,8 @@ dependencies:
   audioplayers: ^6.8.1
   flutter_pcm_sound: ^3.3.3
   shared_preferences: ^2.5.5
+  sqflite: ">=2.3.3+1 <2.4.0"
+  path: ^1.9.1
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2

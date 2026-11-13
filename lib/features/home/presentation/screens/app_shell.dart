@@ -36,10 +36,7 @@ class _AppShellState extends State<AppShell> {
       // Use Stack to display the pages and overlay the floating bottom navigation bar
       body: Stack(
         children: [
-          IndexedStack(
-            index: _currentIndex,
-            children: _pages,
-          ),
+          IndexedStack(index: _currentIndex, children: _pages),
           Positioned(
             left: 14,
             right: 14,
@@ -54,7 +51,9 @@ class _AppShellState extends State<AppShell> {
   Widget _buildFloatingNavbar(bool isDark) {
     final theme = Theme.of(context);
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.05);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
@@ -78,11 +77,31 @@ class _AppShellState extends State<AppShell> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(0, Icons.fact_check_rounded, AppLocalizations.of(context)?.tabRoutines ?? 'Rutinas'),
-              _buildNavItem(1, Icons.graphic_eq_rounded, AppLocalizations.of(context)?.tabSounds ?? 'Sonidos'),
-              _buildNavItem(2, Icons.accessibility_new_rounded, AppLocalizations.of(context)?.tabRelaxation ?? 'Relajación'),
-              _buildNavItem(3, Icons.air_rounded, AppLocalizations.of(context)?.tabBreathing ?? 'Respiración'),
-              _buildNavItem(4, Icons.bar_chart_rounded, AppLocalizations.of(context)?.tabProgress ?? 'Progreso'),
+              _buildNavItem(
+                0,
+                Icons.fact_check_rounded,
+                AppLocalizations.of(context)?.tabRoutines ?? 'Rutinas',
+              ),
+              _buildNavItem(
+                1,
+                Icons.graphic_eq_rounded,
+                AppLocalizations.of(context)?.tabSounds ?? 'Sonidos',
+              ),
+              _buildNavItem(
+                2,
+                Icons.accessibility_new_rounded,
+                AppLocalizations.of(context)?.tabRelaxation ?? 'Relajación',
+              ),
+              _buildNavItem(
+                3,
+                Icons.air_rounded,
+                AppLocalizations.of(context)?.tabBreathing ?? 'Respiración',
+              ),
+              _buildNavItem(
+                4,
+                Icons.bar_chart_rounded,
+                AppLocalizations.of(context)?.tabProgress ?? 'Progreso',
+              ),
             ],
           ),
         ),
@@ -94,7 +113,9 @@ class _AppShellState extends State<AppShell> {
     final theme = Theme.of(context);
     final isSelected = _currentIndex == index;
     final activeColor = SensoryColors.primary;
-    final inactiveColor = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.55);
+    final inactiveColor = theme.textTheme.bodyMedium?.color?.withValues(
+      alpha: 0.55,
+    );
 
     return GestureDetector(
       onTap: () {

@@ -1,12 +1,16 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gtc6/core/theme/colors.dart';
 import '../../domain/models/paint_models.dart';
 import '../../domain/services/canvas_export_service.dart';
+import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+
+import '../controllers/zen_paint_controller.dart';
 import '../widgets/zen_paint_canvas.dart';
 import '../widgets/paint_toolbar.dart';
-import 'package:gtc6/features/progress/domain/services/progress_service.dart';
+import '../widgets/zen_paint_header.dart';
+import '../widgets/zen_paint_immersive_panel.dart';
+import '../widgets/zen_paint_immersive_toolbar.dart';
 
 class ZenPaintScreen extends StatefulWidget {
   const ZenPaintScreen({super.key});
@@ -17,41 +21,19 @@ class ZenPaintScreen extends StatefulWidget {
 
 class _ZenPaintScreenState extends State<ZenPaintScreen>
     with SingleTickerProviderStateMixin {
-  final List<DrawingStroke> _completedStrokes = [];
-  DrawingStroke? _currentStroke;
-
-  Color _selectedColor = SensoryColors.zenTeal;
-  double _strokeWidth = 12.0;
-  double _strokeOpacity = 1.0;
-  bool _isEraser = false;
-  int _selectedTemplateIndex = 0;
-
-  /// Immersive / Pro mode: hides toolbar, appbar, and template pill
-  bool _immersiveMode = false;
-
-  /// Whether to show the paint toolbar in immersive mode
-  bool _showImmersiveToolbar = false;
-
-  /// Position offset for the draggable floating panel in immersive mode
-  /// Starts at mid-right; position is set dynamically on first build
-  Offset? _floatingPanelOffset;
-
-  /// Position offset for the draggable tool bar (PaintToolbar) in immersive mode
-  Offset? _floatingToolbarOffset;
-
-  /// Key for capturing the canvas as a PNG image
+  late final ZenPaintController _controller;
   final GlobalKey _canvasBoundaryKey = GlobalKey();
 
   late final DateTime _startTime;
   late final AnimationController _immersiveAnimController;
   late final Animation<double> _immersiveAnim;
 
-  ArtTemplate get _selectedTemplate => kArtTemplates[_selectedTemplateIndex];
-
   @override
   void initState() {
     super.initState();
+    _controller = ZenPaintController();
     _startTime = DateTime.now();
+
     _immersiveAnimController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -60,11 +42,28 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
       parent: _immersiveAnimController,
       curve: Curves.easeInOutCubic,
     );
+
+    // Sync immersive mode with AnimationController
+    _controller.addListener(_onControllerUpdate);
+  }
+
+  void _onControllerUpdate() {
+    if (_controller.immersiveMode &&
+        _immersiveAnimController.status != AnimationStatus.completed) {
+      _immersiveAnimController.forward();
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    } else if (!_controller.immersiveMode &&
+        _immersiveAnimController.status != AnimationStatus.dismissed) {
+      _immersiveAnimController.reverse();
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onControllerUpdate);
     _immersiveAnimController.dispose();
+
     final double elapsedMinutes =
         DateTime.now().difference(_startTime).inSeconds / 60.0;
     if (elapsedMinutes >= 0.1) {
@@ -72,102 +71,13 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
         ProgressService.instance.recordSession('zen_paint', elapsedMinutes);
       });
     }
+
+    _controller.resetState();
     super.dispose();
   }
 
-  // ── Drawing handlers ──────────────────────────────────────────
-
-  void _onPanStart(Offset point) {
-    setState(() {
-      _currentStroke = DrawingStroke(
-        points: [point],
-        color: _selectedColor,
-        strokeWidth: _strokeWidth,
-        strokeOpacity: _strokeOpacity,
-        isEraser: _isEraser,
-      );
-    });
-    HapticFeedback.selectionClick();
-  }
-
-  void _onPanUpdate(Offset point) {
-    if (_currentStroke == null) return;
-    setState(() {
-      _currentStroke!.points.add(point);
-    });
-  }
-
-  void _onPanEnd() {
-    if (_currentStroke != null) {
-      setState(() {
-        _completedStrokes.add(_currentStroke!);
-        _currentStroke = null;
-      });
-    }
-  }
-
-  void _undo() {
-    if (_completedStrokes.isNotEmpty) {
-      setState(() {
-        _completedStrokes.removeLast();
-      });
-      HapticFeedback.lightImpact();
-    }
-  }
-
-  void _clearCanvas() {
-    if (_completedStrokes.isEmpty) return;
-    final isEs = Localizations.localeOf(context).languageCode == 'es';
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(isEs ? '¿Borrar todo el lienzo?' : 'Clear all canvas?'),
-        content: Text(
-            isEs ? 'Todos tus trazos se borrarán y volverás a empezar en limpio.' : 'All your strokes will be deleted and you will start fresh.'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(isEs ? 'Cancelar' : 'Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _completedStrokes.clear();
-              });
-              HapticFeedback.mediumImpact();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: SensoryColors.error,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(isEs ? 'Borrar' : 'Clear'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Immersive (Pro) mode ──────────────────────────────────────
-
-  void _toggleImmersiveMode() {
-    setState(() {
-      _immersiveMode = !_immersiveMode;
-      if (!_immersiveMode) _showImmersiveToolbar = false;
-    });
-    if (_immersiveMode) {
-      _immersiveAnimController.forward();
-    } else {
-      _immersiveAnimController.reverse();
-    }
-    HapticFeedback.lightImpact();
-  }
-
-  // ── Confirm exit ──────────────────────────────────────────────
-
   Future<bool> _confirmExit() async {
-    if (_completedStrokes.isEmpty) {
+    if (_controller.completedStrokes.isEmpty) {
       Navigator.pop(context);
       return true;
     }
@@ -179,12 +89,19 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 28),
+            const Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.amber,
+              size: 28,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 isEs ? '¿Salir del lienzo?' : 'Leave canvas?',
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -219,19 +136,20 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
     return false;
   }
 
-  // ── Export to PNG ─────────────────────────────────────────────
-
   Future<void> _exportToPng() async {
     final isEs = Localizations.localeOf(context).languageCode == 'es';
 
-    // Show saving indicator
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
             const SizedBox(
-              width: 20, height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: 14),
             Text(isEs ? 'Guardando imagen...' : 'Saving image...'),
@@ -260,8 +178,12 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
             Expanded(
               child: Text(
                 success
-                    ? (isEs ? '¡Imagen guardada en la galería! 🎨' : 'Image saved to gallery! 🎨')
-                    : (isEs ? 'Error al guardar la imagen' : 'Error saving image'),
+                    ? (isEs
+                          ? '¡Imagen guardada en la galería! 🎨'
+                          : 'Image saved to gallery! 🎨')
+                    : (isEs
+                          ? 'Error al guardar la imagen'
+                          : 'Error saving image'),
               ),
             ),
           ],
@@ -274,8 +196,6 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
     );
     HapticFeedback.mediumImpact();
   }
-
-  // ── Template selector ─────────────────────────────────────────
 
   void _showTemplateSelector() {
     final theme = Theme.of(context);
@@ -306,12 +226,16 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              isEs ? 'Seleccionar Plantilla o Modo de Dibujo' : 'Select Template or Drawing Mode',
+              isEs
+                  ? 'Seleccionar Plantilla o Modo de Dibujo'
+                  : 'Select Template or Drawing Mode',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             Text(
-              isEs ? 'Dibuja libremente en blanco o colorea plantillas zen prediseñadas.' : 'Draw freely on a blank canvas or color predesigned Zen templates.',
+              isEs
+                  ? 'Dibuja libremente en blanco o colorea plantillas zen prediseñadas.'
+                  : 'Draw freely on a blank canvas or color predesigned Zen templates.',
               style: TextStyle(
                 fontSize: 13,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
@@ -319,423 +243,95 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
             ),
             const SizedBox(height: 16),
             Flexible(
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: kArtTemplates.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 10),
-                itemBuilder: (context, idx) {
-                  final template = kArtTemplates[idx];
-                  final isSelected = idx == _selectedTemplateIndex;
+              child: ListenableBuilder(
+                listenable: _controller,
+                builder: (context, _) => ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: kArtTemplates.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
+                  itemBuilder: (context, idx) {
+                    final template = kArtTemplates[idx];
+                    final isSelected = idx == _controller.selectedTemplateIndex;
 
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _selectedTemplateIndex = idx;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? SensoryColors.primary.withValues(alpha: 0.15)
-                            : theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _controller.setTemplateIndex(idx);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
                           color: isSelected
-                              ? SensoryColors.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                          width: isSelected ? 2.0 : 1.0,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            template.type.icon,
+                              ? SensoryColors.primary.withValues(alpha: 0.15)
+                              : theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
                             color: isSelected
                                 ? SensoryColors.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                            size: 28,
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  template.type.getLocalizedTitle(context),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15.5,
-                                    color: isSelected
-                                        ? SensoryColors.primary
-                                        : theme.colorScheme.onSurface,
+                                : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.1,
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  template.type.getLocalizedDescription(context),
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            width: isSelected ? 2.0 : 1.0,
                           ),
-                          if (isSelected)
-                            const Icon(
-                              Icons.check_circle_rounded,
-                              color: SensoryColors.primary,
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ── Build ─────────────────────────────────────────────────────
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final isEs = Localizations.localeOf(context).languageCode == 'es';
-    final canvasBgColor = isDark ? const Color(0xFF1B2127) : const Color(0xFFFBFBFB);
-    final outlineColor = isDark ? Colors.white : Colors.black87;
-
-    return PopScope(
-      canPop: _completedStrokes.isEmpty,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _confirmExit();
-      },
-      child: Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      // AppBar with animated visibility
-      appBar: _immersiveMode
-          ? null
-          : AppBar(
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(_selectedTemplate.type.icon, size: 22),
-                  const SizedBox(width: 8),
-                  Text(
-                    _selectedTemplate.type.getLocalizedTitle(context),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                  ),
-                ],
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                onPressed: _confirmExit,
-              ),
-              actions: [
-                // Export PNG button
-                IconButton(
-                  icon: const Icon(Icons.save_alt_rounded),
-                  tooltip: isEs ? 'Guardar como PNG' : 'Save as PNG',
-                  onPressed: _completedStrokes.isNotEmpty ? _exportToPng : null,
-                ),
-                // Template selector
-                IconButton(
-                  icon: const Icon(Icons.style_rounded),
-                  tooltip: isEs ? 'Cambiar Plantilla o Modo' : 'Change Template or Mode',
-                  onPressed: _showTemplateSelector,
-                ),
-                // Immersive mode toggle
-                IconButton(
-                  icon: const Icon(Icons.fullscreen_rounded),
-                  tooltip: isEs ? 'Modo Pro (Pantalla Completa)' : 'Pro Mode (Full Screen)',
-                  onPressed: _toggleImmersiveMode,
-                ),
-                const SizedBox(width: 4),
-              ],
-            ),
-      body: SafeArea(
-        top: !_immersiveMode,
-        child: Stack(
-          children: [
-            // ── Main column with canvas ──
-            Column(
-              children: [
-                // Top template pill (hidden in immersive mode)
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOutCubic,
-                  child: _immersiveMode
-                      ? const SizedBox.shrink()
-                      : GestureDetector(
-                          onTap: _showTemplateSelector,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: SensoryColors.primary.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: SensoryColors.primary.withValues(alpha: 0.3),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.palette_outlined,
-                                    size: 18, color: SensoryColors.primary),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    isEs
-                                        ? 'Modo actual: ${_selectedTemplate.type.getLocalizedTitle(context)} • Toca aquí para cambiar'
-                                        : 'Current mode: ${_selectedTemplate.type.getLocalizedTitle(context)} • Tap here to change',
-                                    style: const TextStyle(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: SensoryColors.primary,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              template.type.icon,
+                              color: isSelected
+                                  ? SensoryColors.primary
+                                  : theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.8,
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                              size: 28,
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    template.type.getLocalizedTitle(context),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15.5,
+                                      color: isSelected
+                                          ? SensoryColors.primary
+                                          : theme.colorScheme.onSurface,
+                                    ),
                                   ),
-                                ),
-                                const Icon(Icons.keyboard_arrow_down_rounded,
-                                    size: 18, color: SensoryColors.primary),
-                              ],
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    template.type.getLocalizedDescription(
+                                      context,
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.7),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                ),
-
-                SizedBox(height: _immersiveMode ? 0 : 8),
-
-                // Drawing Canvas Area
-                Expanded(
-                  child: Center(
-                    child: _immersiveMode
-                        ? Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: _buildCanvas(isDark, canvasBgColor, outlineColor),
-                          )
-                        : AspectRatio(
-                            aspectRatio: 0.82,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: _buildCanvas(isDark, canvasBgColor, outlineColor),
-                            ),
-                          ),
-                  ),
-                ),
-
-                // Bottom toolbar (hidden in immersive mode)
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOutCubic,
-                  child: _immersiveMode
-                      ? const SizedBox.shrink()
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(height: 12),
-                            PaintToolbar(
-                              selectedColor: _selectedColor,
-                              onColorChanged: (color) => setState(() => _selectedColor = color),
-                              isEraser: _isEraser,
-                              onEraserChanged: (isEraser) => setState(() => _isEraser = isEraser),
-                              strokeWidth: _strokeWidth,
-                              onStrokeWidthChanged: (width) => setState(() => _strokeWidth = width),
-                              strokeOpacity: _strokeOpacity,
-                              onStrokeOpacityChanged: (opacity) => setState(() => _strokeOpacity = opacity),
-                              onUndo: _undo,
-                              onClear: _clearCanvas,
-                              canUndo: _completedStrokes.isNotEmpty,
-                              canClear: _completedStrokes.isNotEmpty,
-                            ),
+                            if (isSelected)
+                              const Icon(
+                                Icons.check_circle_rounded,
+                                color: SensoryColors.primary,
+                              ),
                           ],
                         ),
+                      ),
+                    );
+                  },
                 ),
-              ],
+              ),
             ),
-
-            // ── Draggable floating action buttons in immersive mode ──
-            if (_immersiveMode)
-              Builder(builder: (context) {
-                final screenSize = MediaQuery.of(context).size;
-                _floatingPanelOffset ??= Offset(screenSize.width - 58, screenSize.height / 2 - 140);
-                final offset = _floatingPanelOffset!;
-                return Positioned(
-                  left: offset.dx,
-                  top: offset.dy,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      setState(() {
-                        final current = _floatingPanelOffset ?? Offset(screenSize.width - 58, screenSize.height / 2 - 140);
-                        _floatingPanelOffset = Offset(
-                          (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 54),
-                          (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 280),
-                        );
-                      });
-                    },
-                    child: FadeTransition(
-                      opacity: _immersiveAnim,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.55),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.12)
-                                : Colors.black.withValues(alpha: 0.08),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Drag handle
-                            Container(
-                              width: 24,
-                              height: 4,
-                              margin: const EdgeInsets.only(bottom: 6),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.4)
-                                    : Colors.black.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            ),
-                            _buildFloatingButton(
-                              icon: Icons.fullscreen_exit_rounded,
-                              tooltip: isEs ? 'Salir del Modo Pro' : 'Exit Pro Mode',
-                              onTap: _toggleImmersiveMode,
-                            ),
-                            const SizedBox(height: 6),
-                            _buildFloatingButton(
-                              icon: _showImmersiveToolbar
-                                  ? Icons.brush_rounded
-                                  : Icons.brush_outlined,
-                              tooltip: isEs ? 'Herramientas' : 'Tools',
-                              onTap: () => setState(() => _showImmersiveToolbar = !_showImmersiveToolbar),
-                              isActive: _showImmersiveToolbar,
-                            ),
-                            const SizedBox(height: 6),
-                            _buildFloatingButton(
-                              icon: Icons.save_alt_rounded,
-                              tooltip: isEs ? 'Guardar PNG' : 'Save PNG',
-                              onTap: _completedStrokes.isNotEmpty ? _exportToPng : null,
-                            ),
-                            const SizedBox(height: 6),
-                            _buildFloatingButton(
-                              icon: Icons.undo_rounded,
-                              tooltip: isEs ? 'Deshacer' : 'Undo',
-                              onTap: _completedStrokes.isNotEmpty ? _undo : null,
-                            ),
-                            const SizedBox(height: 6),
-                            _buildFloatingButton(
-                              icon: Icons.arrow_back_ios_new_rounded,
-                              tooltip: isEs ? 'Salir' : 'Back',
-                              onTap: _confirmExit,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-
-            // ── Draggable floating toolbar (PaintToolbar) in immersive mode ──
-            if (_immersiveMode && _showImmersiveToolbar)
-              Builder(builder: (context) {
-                final screenSize = MediaQuery.of(context).size;
-                _floatingToolbarOffset ??= Offset(math.max(12.0, (screenSize.width - 350) / 2), screenSize.height - 180);
-                final offset = _floatingToolbarOffset!;
-                return Positioned(
-                  left: offset.dx,
-                  top: offset.dy,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      setState(() {
-                        final current = _floatingToolbarOffset ?? Offset(math.max(12.0, (screenSize.width - 350) / 2), screenSize.height - 180);
-                        _floatingToolbarOffset = Offset(
-                          (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 80),
-                          (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 80),
-                        );
-                      });
-                    },
-                    child: FadeTransition(
-                      opacity: _immersiveAnim,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.65),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.15)
-                                : Colors.black.withValues(alpha: 0.1),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 15,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Drag handle bar
-                            Container(
-                              width: 36,
-                              height: 4,
-                              margin: const EdgeInsets.only(top: 8, bottom: 2),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.4)
-                                    : Colors.black.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            ),
-                            PaintToolbar(
-                              selectedColor: _selectedColor,
-                              onColorChanged: (color) => setState(() => _selectedColor = color),
-                              isEraser: _isEraser,
-                              onEraserChanged: (isEraser) => setState(() => _isEraser = isEraser),
-                              strokeWidth: _strokeWidth,
-                              onStrokeWidthChanged: (width) => setState(() => _strokeWidth = width),
-                              strokeOpacity: _strokeOpacity,
-                              onStrokeOpacityChanged: (opacity) => setState(() => _strokeOpacity = opacity),
-                              onUndo: _undo,
-                              onClear: _clearCanvas,
-                              canUndo: _completedStrokes.isNotEmpty,
-                              canClear: _completedStrokes.isNotEmpty,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
           ],
         ),
       ),
-    ),
     );
   }
 
@@ -759,65 +355,161 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
       ),
       child: ZenPaintCanvas(
         repaintBoundaryKey: _canvasBoundaryKey,
-        completedStrokes: _completedStrokes,
-        currentStroke: _currentStroke,
-        selectedTemplate: _selectedTemplate,
+        completedStrokes: _controller.completedStrokes,
+        currentStroke: _controller.currentStroke,
+        selectedTemplate: _controller.selectedTemplate,
         templateOutlineColor: outlineColor,
         backgroundColor: canvasBgColor,
-        onPanStart: _onPanStart,
-        onPanUpdate: _onPanUpdate,
-        onPanEnd: _onPanEnd,
+        onPanStart: _controller.onPanStart,
+        onPanUpdate: _controller.onPanUpdate,
+        onPanEnd: _controller.onPanEnd,
       ),
     );
   }
 
-  Widget _buildFloatingButton({
-    required IconData icon,
-    required String tooltip,
-    VoidCallback? onTap,
-    bool isActive = false,
-  }) {
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final enabled = onTap != null;
+    final canvasBgColor = isDark
+        ? const Color(0xFF1B2127)
+        : const Color(0xFFFBFBFB);
+    final outlineColor = isDark ? Colors.white : Colors.black87;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Tooltip(
-        message: tooltip,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: isActive
-                ? SensoryColors.primary.withValues(alpha: 0.9)
-                : (isDark ? Colors.black : Colors.white).withValues(alpha: 0.85),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.15)
-                  : Colors.black.withValues(alpha: 0.1),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
+    return ListenableBuilder(
+      listenable: _controller,
+      builder: (context, _) {
+        // Initialize offsets on first layout frame if needed
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _controller.initOffsets(MediaQuery.of(context).size);
+        });
+
+        return PopScope(
+          canPop: _controller.completedStrokes.isEmpty,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop) _confirmExit();
+          },
+          child: Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            appBar: _controller.immersiveMode
+                ? null
+                : AppBar(
+                    title: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(_controller.selectedTemplate.type.icon, size: 22),
+                        const SizedBox(width: 8),
+                        Text(
+                          _controller.selectedTemplate.type.getLocalizedTitle(
+                            context,
+                          ),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                      onPressed: _confirmExit,
+                    ),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.save_alt_rounded),
+                        tooltip: 'Guardar como PNG',
+                        onPressed: _controller.completedStrokes.isNotEmpty
+                            ? _exportToPng
+                            : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.fullscreen_rounded),
+                        tooltip: 'Modo Pro (Pantalla Completa)',
+                        onPressed: _controller.toggleImmersiveMode,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                  ),
+            body: SafeArea(
+              top: !_controller.immersiveMode,
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      ZenPaintTemplateSelector(
+                        onShowTemplateSelector: _showTemplateSelector,
+                      ),
+                      SizedBox(height: _controller.immersiveMode ? 0 : 8),
+                      Expanded(
+                        child: Center(
+                          child: _controller.immersiveMode
+                              ? Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: _buildCanvas(
+                                    isDark,
+                                    canvasBgColor,
+                                    outlineColor,
+                                  ),
+                                )
+                              : AspectRatio(
+                                  aspectRatio: 0.82,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                    ),
+                                    child: _buildCanvas(
+                                      isDark,
+                                      canvasBgColor,
+                                      outlineColor,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOutCubic,
+                        child: _controller.immersiveMode
+                            ? const SizedBox.shrink()
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: 12),
+                                  PaintToolbar(
+                                    selectedColor: _controller.selectedColor,
+                                    onColorChanged: _controller.setColor,
+                                    isEraser: _controller.isEraser,
+                                    onEraserChanged: _controller.setEraser,
+                                    strokeWidth: _controller.strokeWidth,
+                                    onStrokeWidthChanged:
+                                        _controller.setStrokeWidth,
+                                    strokeOpacity: _controller.strokeOpacity,
+                                    onStrokeOpacityChanged:
+                                        _controller.setStrokeOpacity,
+                                    onUndo: _controller.undo,
+                                    onClear: _controller.clearCanvas,
+                                    canUndo: _controller.canUndo,
+                                    canClear: _controller.canClear,
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ],
+                  ),
+                  ZenPaintImmersivePanel(
+                    immersiveAnim: _immersiveAnim,
+                    onExport: _exportToPng,
+                    onExit: _confirmExit,
+                  ),
+                  ZenPaintImmersiveToolbar(immersiveAnim: _immersiveAnim),
+                ],
               ),
-            ],
+            ),
           ),
-          child: Icon(
-            icon,
-            size: 22,
-            color: isActive
-                ? Colors.white
-                : enabled
-                    ? (isDark ? Colors.white : Colors.black87)
-                    : (isDark ? Colors.white24 : Colors.black26),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

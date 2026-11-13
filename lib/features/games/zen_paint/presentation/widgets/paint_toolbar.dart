@@ -104,7 +104,7 @@ class PaintToolbar extends StatelessWidget {
                                 color: color.withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 offset: const Offset(0, 3),
-                              )
+                              ),
                             ]
                           : null,
                     ),
@@ -158,7 +158,10 @@ class PaintToolbar extends StatelessWidget {
                           : selectedColor.withValues(alpha: strokeOpacity),
                       shape: BoxShape.circle,
                       border: isEraser
-                          ? Border.all(color: theme.colorScheme.onSurface, width: 1.5)
+                          ? Border.all(
+                              color: theme.colorScheme.onSurface,
+                              width: 1.5,
+                            )
                           : null,
                     ),
                   ),
@@ -176,14 +179,18 @@ class PaintToolbar extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.line_weight_rounded,
-                                  size: 15,
-                                  color: isEraser ? null : selectedColor),
+                              Icon(
+                                Icons.line_weight_rounded,
+                                size: 15,
+                                color: isEraser ? null : selectedColor,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 '${AppLocalizations.of(context)?.paintBrushSize ?? 'Grosor Pincel'}: ${strokeWidth.toInt()} px',
                                 style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.bold),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -210,16 +217,20 @@ class PaintToolbar extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.opacity_rounded,
-                                  size: 15,
-                                  color: isEraser ? null : selectedColor),
+                              Icon(
+                                Icons.opacity_rounded,
+                                size: 15,
+                                color: isEraser ? null : selectedColor,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 isEraser
                                     ? '${(AppLocalizations.of(context)?.localeName == 'es') ? 'Fuerza borrador: ' : 'Eraser strength: '}${(strokeOpacity * 100).toInt()}%'
                                     : '${AppLocalizations.of(context)?.paintOpacity ?? 'Espesor/Opacidad'}: ${(strokeOpacity * 100).toInt()}%',
                                 style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.bold),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -254,7 +265,8 @@ class PaintToolbar extends StatelessWidget {
                 child: _buildToolButton(
                   context: context,
                   icon: Icons.brush_rounded,
-                  label: AppLocalizations.of(context)?.paintBrushMode ?? 'Pincel',
+                  label:
+                      AppLocalizations.of(context)?.paintBrushMode ?? 'Pincel',
                   isActive: !isEraser,
                   onTap: () => onEraserChanged(false),
                 ),
@@ -266,7 +278,9 @@ class PaintToolbar extends StatelessWidget {
                 child: _buildToolButton(
                   context: context,
                   icon: Icons.auto_fix_high_rounded,
-                  label: AppLocalizations.of(context)?.paintEraserMode ?? 'Borrador',
+                  label:
+                      AppLocalizations.of(context)?.paintEraserMode ??
+                      'Borrador',
                   isActive: isEraser,
                   onTap: () => onEraserChanged(true),
                 ),
@@ -276,14 +290,18 @@ class PaintToolbar extends StatelessWidget {
               // Undo button
               IconButton(
                 icon: const Icon(Icons.undo_rounded),
-                tooltip: (AppLocalizations.of(context)?.localeName == 'es') ? 'Deshacer último trazo' : 'Undo last stroke',
+                tooltip: (AppLocalizations.of(context)?.localeName == 'es')
+                    ? 'Deshacer último trazo'
+                    : 'Undo last stroke',
                 onPressed: canUndo ? onUndo : null,
               ),
 
               // Clear button
               IconButton(
                 icon: const Icon(Icons.delete_sweep_rounded),
-                tooltip: AppLocalizations.of(context)?.paintClearBtn ?? 'Limpiar Lienzo',
+                tooltip:
+                    AppLocalizations.of(context)?.paintClearBtn ??
+                    'Limpiar Lienzo',
                 color: SensoryColors.error,
                 onPressed: canClear ? onClear : null,
               ),
@@ -310,7 +328,9 @@ class PaintToolbar extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isActive ? activeColor.withValues(alpha: 0.18) : Colors.transparent,
+          color: isActive
+              ? activeColor.withValues(alpha: 0.18)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isActive ? activeColor : theme.dividerColor,
@@ -323,7 +343,9 @@ class PaintToolbar extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: isActive ? activeColor : theme.iconTheme.color?.withValues(alpha: 0.7),
+              color: isActive
+                  ? activeColor
+                  : theme.iconTheme.color?.withValues(alpha: 0.7),
             ),
             const SizedBox(width: 6),
             Flexible(
@@ -332,7 +354,11 @@ class PaintToolbar extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
-                  color: isActive ? activeColor : theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                  color: isActive
+                      ? activeColor
+                      : theme.textTheme.bodyMedium?.color?.withValues(
+                          alpha: 0.7,
+                        ),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

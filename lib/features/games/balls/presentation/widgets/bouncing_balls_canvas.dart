@@ -33,7 +33,10 @@ class Ball {
     // Collision with left and right walls
     if (position.dx - radius < 0) {
       position = Offset(radius, position.dy);
-      velocity = Offset(-velocity.dx * 0.8, velocity.dy); // Bounce with energy loss
+      velocity = Offset(
+        -velocity.dx * 0.8,
+        velocity.dy,
+      ); // Bounce with energy loss
     } else if (position.dx + radius > bounds.width) {
       position = Offset(bounds.width - radius, position.dy);
       velocity = Offset(-velocity.dx * 0.8, velocity.dy);
@@ -46,7 +49,7 @@ class Ball {
     } else if (position.dy + radius > bounds.height) {
       position = Offset(position.dx, bounds.height - radius);
       velocity = Offset(velocity.dx, -velocity.dy * 0.8);
-      
+
       // Stop ball from sinking due to gravity
       if (velocity.dy.abs() < 0.2) {
         velocity = Offset(velocity.dx, 0);
@@ -67,7 +70,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
   late AnimationController _controller;
   final List<Ball> _balls = [];
   final Random _random = Random();
-  
+
   double _gravity = 0.3;
   final double _friction = 0.99;
   bool _useGravity = true;
@@ -92,38 +95,51 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
     for (int i = 0; i < numSamples; i++) {
       final double t = i / sampleRate;
       // Frequency sweep upward
-      final double freq = baseFreq + (baseFreq * 1.5) * (t / (durationMs / 1000));
+      final double freq =
+          baseFreq + (baseFreq * 1.5) * (t / (durationMs / 1000));
       // Envelope: quick attack, fast decay
-      final double envelope = (1.0 - (i / numSamples)) * (i < numSamples * 0.1
-          ? i / (numSamples * 0.1)
-          : 1.0);
+      final double envelope =
+          (1.0 - (i / numSamples)) *
+          (i < numSamples * 0.1 ? i / (numSamples * 0.1) : 1.0);
       final double sample = sin(2 * pi * freq * t) * envelope * 0.6;
-      pcm.setInt16(i * 2, (sample * 32767).round().clamp(-32768, 32767), Endian.little);
+      pcm.setInt16(
+        i * 2,
+        (sample * 32767).round().clamp(-32768, 32767),
+        Endian.little,
+      );
     }
 
     // Build a minimal PCM WAV header (44 bytes)
     final int dataSize = numSamples * 2;
     final ByteData header = ByteData(44);
     // RIFF chunk
-    header.setUint8(0, 0x52); header.setUint8(1, 0x49); // 'RI'
-    header.setUint8(2, 0x46); header.setUint8(3, 0x46); // 'FF'
-    header.setUint32(4, 36 + dataSize, Endian.little);  // ChunkSize
-    header.setUint8(8, 0x57); header.setUint8(9, 0x41); // 'WA'
-    header.setUint8(10, 0x56); header.setUint8(11, 0x45); // 'VE'
+    header.setUint8(0, 0x52);
+    header.setUint8(1, 0x49); // 'RI'
+    header.setUint8(2, 0x46);
+    header.setUint8(3, 0x46); // 'FF'
+    header.setUint32(4, 36 + dataSize, Endian.little); // ChunkSize
+    header.setUint8(8, 0x57);
+    header.setUint8(9, 0x41); // 'WA'
+    header.setUint8(10, 0x56);
+    header.setUint8(11, 0x45); // 'VE'
     // fmt sub-chunk
-    header.setUint8(12, 0x66); header.setUint8(13, 0x6D); // 'fm'
-    header.setUint8(14, 0x74); header.setUint8(15, 0x20); // 't '
-    header.setUint32(16, 16, Endian.little);            // Subchunk1Size
-    header.setUint16(20, 1, Endian.little);             // AudioFormat PCM
-    header.setUint16(22, 1, Endian.little);             // NumChannels mono
-    header.setUint32(24, sampleRate, Endian.little);    // SampleRate
-    header.setUint32(28, sampleRate * 2, Endian.little);// ByteRate
-    header.setUint16(32, 2, Endian.little);             // BlockAlign
-    header.setUint16(34, 16, Endian.little);            // BitsPerSample
+    header.setUint8(12, 0x66);
+    header.setUint8(13, 0x6D); // 'fm'
+    header.setUint8(14, 0x74);
+    header.setUint8(15, 0x20); // 't '
+    header.setUint32(16, 16, Endian.little); // Subchunk1Size
+    header.setUint16(20, 1, Endian.little); // AudioFormat PCM
+    header.setUint16(22, 1, Endian.little); // NumChannels mono
+    header.setUint32(24, sampleRate, Endian.little); // SampleRate
+    header.setUint32(28, sampleRate * 2, Endian.little); // ByteRate
+    header.setUint16(32, 2, Endian.little); // BlockAlign
+    header.setUint16(34, 16, Endian.little); // BitsPerSample
     // data sub-chunk
-    header.setUint8(36, 0x64); header.setUint8(37, 0x61); // 'da'
-    header.setUint8(38, 0x74); header.setUint8(39, 0x61); // 'ta'
-    header.setUint32(40, dataSize, Endian.little);      // Subchunk2Size
+    header.setUint8(36, 0x64);
+    header.setUint8(37, 0x61); // 'da'
+    header.setUint8(38, 0x74);
+    header.setUint8(39, 0x61); // 'ta'
+    header.setUint32(40, dataSize, Endian.little); // Subchunk2Size
 
     final Uint8List wav = Uint8List(44 + dataSize);
     wav.setRange(0, 44, header.buffer.asUint8List());
@@ -142,7 +158,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
       duration: const Duration(seconds: 1),
     )..addListener(_updatePhysics);
     _controller.repeat();
-    
+
     // Spawn some initial balls
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _spawnInitialBalls();
@@ -152,7 +168,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
   void _spawnInitialBalls() {
     final Size size = MediaQuery.of(context).size;
     final List<Color> colors = SensoryColors.gameColors;
-    
+
     for (int i = 0; i < 15; i++) {
       _balls.add(
         Ball(
@@ -173,14 +189,10 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
 
   void _updatePhysics() {
     final Size size = MediaQuery.of(context).size;
-    
+
     setState(() {
       for (int i = 0; i < _balls.length; i++) {
-        _balls[i].updatePhysics(
-          size,
-          _useGravity ? _gravity : 0.0,
-          _friction,
-        );
+        _balls[i].updatePhysics(size, _useGravity ? _gravity : 0.0, _friction);
 
         // Handle ball-to-ball collisions
         for (int j = i + 1; j < _balls.length; j++) {
@@ -201,7 +213,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
       final double overlap = minDistance - distance;
       final double divisor = distance == 0 ? 0.001 : distance;
       final Offset normal = Offset(dx / divisor, dy / divisor);
-      
+
       b1.position -= normal * (overlap * 0.5);
       b2.position += normal * (overlap * 0.5);
 
@@ -209,16 +221,18 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
       // Relative velocity
       final Offset relativeVelocity = b2.velocity - b1.velocity;
       // Velocity along normal
-      final double velAlongNormal = relativeVelocity.dx * normal.dx + relativeVelocity.dy * normal.dy;
+      final double velAlongNormal =
+          relativeVelocity.dx * normal.dx + relativeVelocity.dy * normal.dy;
 
       // Do not resolve if velocities are separating
       if (velAlongNormal < 0) {
         // Restitution (elasticity coefficient)
         const double restitution = 0.85;
-        
+
         // Calculate impulse scalar
         double impulse = -(1 + restitution) * velAlongNormal;
-        impulse /= (1 / b1.radius + 1 / b2.radius); // Mass is proportional to radius
+        impulse /=
+            (1 / b1.radius + 1 / b2.radius); // Mass is proportional to radius
 
         // Apply impulse
         final Offset impulseVector = normal * impulse;
@@ -310,12 +324,19 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
                   Row(
                     children: [
                       IconButton(
-                        icon: Icon(_soundEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded),
-                        color: _soundEnabled ? SensoryColors.primary : SensoryColors.textDark.withValues(alpha: 0.5),
+                        icon: Icon(
+                          _soundEnabled
+                              ? Icons.volume_up_rounded
+                              : Icons.volume_off_rounded,
+                        ),
+                        color: _soundEnabled
+                            ? SensoryColors.primary
+                            : SensoryColors.textDark.withValues(alpha: 0.5),
                         tooltip: _soundEnabled
                             ? (isEs ? 'Silenciar sonido' : 'Mute sound')
                             : (isEs ? 'Activar sonido' : 'Unmute sound'),
-                        onPressed: () => setState(() => _soundEnabled = !_soundEnabled),
+                        onPressed: () =>
+                            setState(() => _soundEnabled = !_soundEnabled),
                       ),
                       IconButton(
                         icon: const Icon(Icons.refresh_rounded),
@@ -342,7 +363,9 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
                         min: 0.1,
                         max: 1.0,
                         activeColor: SensoryColors.primary,
-                        inactiveColor: SensoryColors.primary.withValues(alpha: 0.2),
+                        inactiveColor: SensoryColors.primary.withValues(
+                          alpha: 0.2,
+                        ),
                         onChanged: (value) {
                           setState(() {
                             _gravity = value;
@@ -355,7 +378,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
             ],
           ),
         ),
-        
+
         // Interaction Canvas
         Expanded(
           child: GestureDetector(
@@ -370,7 +393,7 @@ class _BouncingBallsCanvasState extends State<BouncingBallsCanvas>
             ),
           ),
         ),
-        
+
         // Instructional Bottom Sheet / Text
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -416,7 +439,10 @@ class BallsPainter extends CustomPainter {
         ..color = Colors.white.withValues(alpha: 0.4)
         ..style = PaintingStyle.fill;
       canvas.drawCircle(
-        Offset(ball.position.dx - ball.radius * 0.35, ball.position.dy - ball.radius * 0.35),
+        Offset(
+          ball.position.dx - ball.radius * 0.35,
+          ball.position.dy - ball.radius * 0.35,
+        ),
         ball.radius * 0.25,
         highlightPaint,
       );

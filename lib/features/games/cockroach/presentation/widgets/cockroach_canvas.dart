@@ -68,7 +68,7 @@ class CockroachCanvasState extends State<CockroachCanvas>
   final List<CockroachSplat> _splats = [];
   final math.Random _random = math.Random();
   final AudioPlayer _audioPlayer = AudioPlayer();
-  
+
   int _squashCount = 0;
   int _idCounter = 0;
   String? _squishSoundUri;
@@ -351,11 +351,13 @@ class CockroachPainter extends CustomPainter {
         ..style = PaintingStyle.fill;
 
       canvas.drawCircle(splat.position, splat.radius, splatPaint);
-      
+
       for (int i = 0; i < 6; i++) {
         final double angle = i * math.pi / 3;
         final double offsetDist = splat.radius * 0.9;
-        final Offset dropPos = splat.position + Offset(math.cos(angle) * offsetDist, math.sin(angle) * offsetDist);
+        final Offset dropPos =
+            splat.position +
+            Offset(math.cos(angle) * offsetDist, math.sin(angle) * offsetDist);
         canvas.drawCircle(dropPos, splat.radius * 0.35, splatPaint);
       }
     }
@@ -369,8 +371,12 @@ class CockroachPainter extends CustomPainter {
       final double scale = roach.isSquashed ? roach.squashedScale : 1.0;
       canvas.scale(scale * roach.scaleFactor);
 
-      final Color bodyColor = isDark ? const Color(0xFF8D6E63) : const Color(0xFF5D4037);
-      final Color wingColor = isDark ? const Color(0xFFA1887F) : const Color(0xFF4E342E);
+      final Color bodyColor = isDark
+          ? const Color(0xFF8D6E63)
+          : const Color(0xFF5D4037);
+      final Color wingColor = isDark
+          ? const Color(0xFFA1887F)
+          : const Color(0xFF4E342E);
 
       final Paint bodyPaint = Paint()
         ..color = bodyColor
@@ -407,8 +413,10 @@ class CockroachPainter extends CustomPainter {
           final Path legL = Path()
             ..moveTo(0, legDirY * length)
             ..quadraticBezierTo(
-              -width * 1.8, (legDirY * length) - 6 + wiggleL * 6,
-              -width * 1.6, (legDirY * length) - 12 + wiggleL * 4,
+              -width * 1.8,
+              (legDirY * length) - 6 + wiggleL * 6,
+              -width * 1.6,
+              (legDirY * length) - 12 + wiggleL * 4,
             );
           canvas.drawPath(legL, legPaint);
 
@@ -416,8 +424,10 @@ class CockroachPainter extends CustomPainter {
           final Path legR = Path()
             ..moveTo(0, legDirY * length)
             ..quadraticBezierTo(
-              width * 1.8, (legDirY * length) - 6 + wiggleR * 6,
-              width * 1.6, (legDirY * length) - 12 + wiggleR * 4,
+              width * 1.8,
+              (legDirY * length) - 6 + wiggleR * 6,
+              width * 1.6,
+              (legDirY * length) - 12 + wiggleR * 4,
             );
           canvas.drawPath(legR, legPaint);
         }
@@ -425,8 +435,16 @@ class CockroachPainter extends CustomPainter {
         // Squashed bent legs
         for (int i = 0; i < 3; i++) {
           final double legDirY = -0.4 + (i * 0.4);
-          canvas.drawLine(Offset(0, legDirY * length), Offset(-width * 1.5, legDirY * length - 18), legPaint);
-          canvas.drawLine(Offset(0, legDirY * length), Offset(width * 1.5, legDirY * length - 12), legPaint);
+          canvas.drawLine(
+            Offset(0, legDirY * length),
+            Offset(-width * 1.5, legDirY * length - 18),
+            legPaint,
+          );
+          canvas.drawLine(
+            Offset(0, legDirY * length),
+            Offset(width * 1.5, legDirY * length - 12),
+            legPaint,
+          );
         }
       }
 
@@ -442,8 +460,10 @@ class CockroachPainter extends CustomPainter {
         final Path antL = Path()
           ..moveTo(0, length * 0.6)
           ..quadraticBezierTo(
-            -width * 0.8, length * 1.2,
-            -width * 1.2 - antWiggle * 8, length * 1.5,
+            -width * 0.8,
+            length * 1.2,
+            -width * 1.2 - antWiggle * 8,
+            length * 1.5,
           );
         canvas.drawPath(antL, antPaint);
 
@@ -451,35 +471,63 @@ class CockroachPainter extends CustomPainter {
         final Path antR = Path()
           ..moveTo(0, length * 0.6)
           ..quadraticBezierTo(
-            width * 0.8, length * 1.2,
-            width * 1.2 + antWiggle * 8, length * 1.5,
+            width * 0.8,
+            length * 1.2,
+            width * 1.2 + antWiggle * 8,
+            length * 1.5,
           );
         canvas.drawPath(antR, antPaint);
       }
 
       // C. Draw Abdomen (Bottom body oval)
       canvas.drawOval(
-        Rect.fromCenter(center: Offset(0, -length * 0.15), width: width, height: length * 0.8),
+        Rect.fromCenter(
+          center: Offset(0, -length * 0.15),
+          width: width,
+          height: length * 0.8,
+        ),
         bodyPaint,
       );
 
       // D. Draw Wings
       if (!roach.isSquashed) {
         canvas.drawOval(
-          Rect.fromCenter(center: Offset(0, -length * 0.2), width: width * 1.05, height: length * 0.8),
+          Rect.fromCenter(
+            center: Offset(0, -length * 0.2),
+            width: width * 1.05,
+            height: length * 0.8,
+          ),
           wingPaint,
         );
-        canvas.drawLine(Offset(0, -length * 0.6), Offset(0, length * 0.15), detailPaint);
+        canvas.drawLine(
+          Offset(0, -length * 0.6),
+          Offset(0, length * 0.15),
+          detailPaint,
+        );
       } else {
         // Crushed wings spread apart
         canvas.save();
         canvas.rotate(-0.3);
-        canvas.drawOval(Rect.fromCenter(center: Offset(-width * 0.25, -length * 0.2), width: width * 1.1, height: length * 0.8), wingPaint);
+        canvas.drawOval(
+          Rect.fromCenter(
+            center: Offset(-width * 0.25, -length * 0.2),
+            width: width * 1.1,
+            height: length * 0.8,
+          ),
+          wingPaint,
+        );
         canvas.restore();
 
         canvas.save();
         canvas.rotate(0.3);
-        canvas.drawOval(Rect.fromCenter(center: Offset(width * 0.25, -length * 0.2), width: width * 1.1, height: length * 0.8), wingPaint);
+        canvas.drawOval(
+          Rect.fromCenter(
+            center: Offset(width * 0.25, -length * 0.2),
+            width: width * 1.1,
+            height: length * 0.8,
+          ),
+          wingPaint,
+        );
         canvas.restore();
       }
 
