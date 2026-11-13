@@ -45,7 +45,11 @@ class ProgressScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Row(
           children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent, size: 28),
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.orangeAccent,
+              size: 28,
+            ),
             SizedBox(width: 10),
             Text('¿Reiniciar progreso?'),
           ],
@@ -78,7 +82,9 @@ class ProgressScreen extends StatelessWidget {
               backgroundColor: SensoryColors.error,
               foregroundColor: Colors.white,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Sí, reiniciar'),
           ),
@@ -103,7 +109,10 @@ class ProgressScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: AnimatedBuilder(
-          animation: Listenable.merge([ProgressService.instance, LocaleController.instance]),
+          animation: Listenable.merge([
+            ProgressService.instance,
+            LocaleController.instance,
+          ]),
           builder: (context, _) {
             final stats = ProgressService.instance.stats;
             return ListView(
@@ -151,7 +160,9 @@ class ProgressScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.03),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -177,17 +188,16 @@ class ProgressScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  streak == 0 ? 'Sin Racha' : '$streak ${streak == 1 ? "Día" : "Días"} de Racha',
+                  streak == 0
+                      ? 'Sin Racha'
+                      : '$streak ${streak == 1 ? "Día" : "Días"} de Racha',
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 22,
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  motivationMsg,
-                  style: theme.textTheme.bodyMedium,
-                ),
+                Text(motivationMsg, style: theme.textTheme.bodyMedium),
                 if (stats.longestStreak > 0) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -195,7 +205,9 @@ class ProgressScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
-                      color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                      color: theme.textTheme.bodyMedium?.color?.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                   ),
                 ],
@@ -212,7 +224,9 @@ class ProgressScreen extends StatelessWidget {
     final int hoursInt = minutes ~/ 60;
     final int minsInt = (minutes % 60).round();
 
-    final String timeStr = hoursInt > 0 ? '${hoursInt}h ${minsInt}m' : '$minsInt min';
+    final String timeStr = hoursInt > 0
+        ? '${hoursInt}h ${minsInt}m'
+        : '$minsInt min';
 
     return Row(
       children: [
@@ -257,7 +271,9 @@ class ProgressScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.03),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.03),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -309,7 +325,9 @@ class ProgressScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.03),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -328,7 +346,8 @@ class ProgressScreen extends StatelessWidget {
             children: weekDates.map((date) {
               final dateStr = date.toIso8601String().split('T')[0];
               final isActive = stats.activeDays.contains(dateStr);
-              final isToday = dateStr == DateTime.now().toIso8601String().split('T')[0];
+              final isToday =
+                  dateStr == DateTime.now().toIso8601String().split('T')[0];
 
               return Column(
                 children: [
@@ -337,7 +356,11 @@ class ProgressScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: isToday ? SensoryColors.secondary : theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
+                      color: isToday
+                          ? SensoryColors.secondary
+                          : theme.textTheme.bodyMedium?.color?.withValues(
+                              alpha: 0.6,
+                            ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -349,23 +372,33 @@ class ProgressScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: isActive
                           ? SensoryColors.primary
-                          : (isToday ? SensoryColors.primary.withValues(alpha: 0.15) : Colors.transparent),
+                          : (isToday
+                                ? SensoryColors.primary.withValues(alpha: 0.15)
+                                : Colors.transparent),
                       border: Border.all(
                         color: isActive
                             ? SensoryColors.primary
-                            : (isToday ? SensoryColors.primary : (isDark ? Colors.white24 : Colors.black12)),
+                            : (isToday
+                                  ? SensoryColors.primary
+                                  : (isDark ? Colors.white24 : Colors.black12)),
                         width: 2,
                       ),
                     ),
                     child: Center(
                       child: isActive
-                          ? const Icon(Icons.check_rounded, color: Colors.white, size: 20)
+                          ? const Icon(
+                              Icons.check_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            )
                           : Text(
                               '${date.day}',
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: isToday ? SensoryColors.primary : theme.textTheme.bodyMedium?.color,
+                                color: isToday
+                                    ? SensoryColors.primary
+                                    : theme.textTheme.bodyMedium?.color,
                               ),
                             ),
                     ),
@@ -400,7 +433,9 @@ class ProgressScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.03),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -522,7 +557,9 @@ class ProgressScreen extends StatelessWidget {
         color: cardColor,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.06),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.black.withValues(alpha: 0.06),
           width: 1.2,
         ),
         boxShadow: [
@@ -545,7 +582,11 @@ class ProgressScreen extends StatelessWidget {
                   color: SensoryColors.zenIndigo.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.language_rounded, color: SensoryColors.zenIndigo, size: 24),
+                child: const Icon(
+                  Icons.language_rounded,
+                  color: SensoryColors.zenIndigo,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -554,14 +595,20 @@ class ProgressScreen extends StatelessWidget {
                   children: [
                     Text(
                       l10n?.languageSettingsTitle ?? 'Idioma de la Aplicación',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      l10n?.languageSettingsSubtitle ?? 'Elige el idioma para todas las rutinas',
+                      l10n?.languageSettingsSubtitle ??
+                          'Elige el idioma para todas las rutinas',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.65,
+                        ),
                       ),
                     ),
                   ],
@@ -577,7 +624,8 @@ class ProgressScreen extends StatelessWidget {
                   context: context,
                   label: '🇪🇸 Español (ES)',
                   isSelected: currentCode == 'es',
-                  onTap: () => LocaleController.instance.setLocale(const Locale('es')),
+                  onTap: () =>
+                      LocaleController.instance.setLocale(const Locale('es')),
                 ),
               ),
               const SizedBox(width: 12),
@@ -586,7 +634,8 @@ class ProgressScreen extends StatelessWidget {
                   context: context,
                   label: '🇺🇸 English (EN)',
                   isSelected: currentCode == 'en',
-                  onTap: () => LocaleController.instance.setLocale(const Locale('en')),
+                  onTap: () =>
+                      LocaleController.instance.setLocale(const Locale('en')),
                 ),
               ),
             ],
@@ -612,7 +661,9 @@ class ProgressScreen extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.15) : Colors.transparent,
+          color: isSelected
+              ? activeColor.withValues(alpha: 0.15)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? activeColor : theme.dividerColor,
@@ -648,7 +699,10 @@ class ProgressScreen extends StatelessWidget {
     return Center(
       child: TextButton.icon(
         onPressed: () => _showResetDialog(context),
-        icon: const Icon(Icons.delete_sweep_rounded, color: SensoryColors.error),
+        icon: const Icon(
+          Icons.delete_sweep_rounded,
+          color: SensoryColors.error,
+        ),
         label: const Text(
           'Reiniciar mi progreso',
           style: TextStyle(
@@ -661,7 +715,10 @@ class ProgressScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: SensoryColors.error.withValues(alpha: 0.2), width: 1.5),
+            side: BorderSide(
+              color: SensoryColors.error.withValues(alpha: 0.2),
+              width: 1.5,
+            ),
           ),
         ),
       ),

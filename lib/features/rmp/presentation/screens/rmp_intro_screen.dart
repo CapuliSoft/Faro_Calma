@@ -5,10 +5,26 @@ import 'rmp_session_screen.dart';
 import 'package:gtc6/l10n/app_localizations.dart';
 
 enum RmpRoutine {
-  cuerpoCompleto('Cuerpo Completo', 'Todas las 14 zonas musculares para una relajación profunda y total.', 14),
-  express('Express (Básico)', '4 zonas principales (manos, frente, hombros, pies) ideal para calma rápida.', 4),
-  superior('Tren Superior', '8 zonas superiores (brazos, hombros, cara, cuello) para liberar tensión acumulada.', 8),
-  inferior('Tren Inferior', '6 zonas inferiores (torso, piernas, pantorrillas y pies) para descansar el cuerpo.', 6);
+  cuerpoCompleto(
+    'Cuerpo Completo',
+    'Todas las 14 zonas musculares para una relajación profunda y total.',
+    14,
+  ),
+  express(
+    'Express (Básico)',
+    '4 zonas principales (manos, frente, hombros, pies) ideal para calma rápida.',
+    4,
+  ),
+  superior(
+    'Tren Superior',
+    '8 zonas superiores (brazos, hombros, cara, cuello) para liberar tensión acumulada.',
+    8,
+  ),
+  inferior(
+    'Tren Inferior',
+    '6 zonas inferiores (torso, piernas, pantorrillas y pies) para descansar el cuerpo.',
+    6,
+  );
 
   final String title;
   final String description;
@@ -20,19 +36,28 @@ extension LocalizedRmpRoutine on RmpRoutine {
   String getLocalizedTitle(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (this) {
-      case RmpRoutine.cuerpoCompleto: return l10n?.rmp_routine_cuerpoCompleto_title ?? title;
-      case RmpRoutine.express: return l10n?.rmp_routine_express_title ?? title;
-      case RmpRoutine.superior: return l10n?.rmp_routine_superior_title ?? title;
-      case RmpRoutine.inferior: return l10n?.rmp_routine_inferior_title ?? title;
+      case RmpRoutine.cuerpoCompleto:
+        return l10n?.rmp_routine_cuerpoCompleto_title ?? title;
+      case RmpRoutine.express:
+        return l10n?.rmp_routine_express_title ?? title;
+      case RmpRoutine.superior:
+        return l10n?.rmp_routine_superior_title ?? title;
+      case RmpRoutine.inferior:
+        return l10n?.rmp_routine_inferior_title ?? title;
     }
   }
+
   String getLocalizedDescription(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     switch (this) {
-      case RmpRoutine.cuerpoCompleto: return l10n?.rmp_routine_cuerpoCompleto_desc ?? description;
-      case RmpRoutine.express: return l10n?.rmp_routine_express_desc ?? description;
-      case RmpRoutine.superior: return l10n?.rmp_routine_superior_desc ?? description;
-      case RmpRoutine.inferior: return l10n?.rmp_routine_inferior_desc ?? description;
+      case RmpRoutine.cuerpoCompleto:
+        return l10n?.rmp_routine_cuerpoCompleto_desc ?? description;
+      case RmpRoutine.express:
+        return l10n?.rmp_routine_express_desc ?? description;
+      case RmpRoutine.superior:
+        return l10n?.rmp_routine_superior_desc ?? description;
+      case RmpRoutine.inferior:
+        return l10n?.rmp_routine_inferior_desc ?? description;
     }
   }
 }
@@ -59,16 +84,20 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
           kRmpMuscleGroups[13], // Pies
         ];
       case RmpRoutine.superior:
-        return kRmpMuscleGroups.where((g) => 
-          g.category == 'Brazos' || 
-          g.category == 'Cara y Cabeza' || 
-          g.category == 'Cuello y Hombros'
-        ).toList();
+        return kRmpMuscleGroups
+            .where(
+              (g) =>
+                  g.category == 'Brazos' ||
+                  g.category == 'Cara y Cabeza' ||
+                  g.category == 'Cuello y Hombros',
+            )
+            .toList();
       case RmpRoutine.inferior:
-        return kRmpMuscleGroups.where((g) => 
-          g.category == 'Torso' || 
-          g.category == 'Piernas y Pies'
-        ).toList();
+        return kRmpMuscleGroups
+            .where(
+              (g) => g.category == 'Torso' || g.category == 'Piernas y Pies',
+            )
+            .toList();
       case RmpRoutine.cuerpoCompleto:
         return List<MuscleGroup>.from(kRmpMuscleGroups);
     }
@@ -84,9 +113,7 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => RmpSessionScreen(config: config),
-      ),
+      MaterialPageRoute(builder: (_) => RmpSessionScreen(config: config)),
     );
   }
 
@@ -124,19 +151,26 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
                 color: SensoryColors.zenTeal.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                    color: SensoryColors.zenTeal.withValues(alpha: 0.3)),
+                  color: SensoryColors.zenTeal.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.accessibility_new_rounded,
-                      color: SensoryColors.zenTeal, size: 28),
+                  const Icon(
+                    Icons.accessibility_new_rounded,
+                    color: SensoryColors.zenTeal,
+                    size: 28,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      l10n?.rmpIntroBanner ?? 'La técnica de Jacobson consiste en tensar conscientemente grupos musculares y luego soltarlos...',
+                      l10n?.rmpIntroBanner ??
+                          'La técnica de Jacobson consiste en tensar conscientemente grupos musculares y luego soltarlos...',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.9,
+                        ),
                         height: 1.3,
                       ),
                     ),
@@ -144,11 +178,15 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
                 ],
               ),
             ),
-            _buildSectionHeader(isEs ? '1. SELECCIONAR RUTINA' : '1. SELECT ROUTINE'),
+            _buildSectionHeader(
+              isEs ? '1. SELECCIONAR RUTINA' : '1. SELECT ROUTINE',
+            ),
             const SizedBox(height: 12),
             _buildRoutinesGrid(isDark),
             const SizedBox(height: 28),
-            _buildSectionHeader(isEs ? '2. SELECCIONAR DURACIÓN' : '2. SELECT DURATION'),
+            _buildSectionHeader(
+              isEs ? '2. SELECCIONAR DURACIÓN' : '2. SELECT DURATION',
+            ),
             const SizedBox(height: 12),
             _buildDurationsRow(isDark),
             const SizedBox(height: 28),
@@ -194,7 +232,9 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
               side: BorderSide(
                 color: selected
                     ? SensoryColors.primary
-                    : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
+                    : (isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.black.withValues(alpha: 0.03)),
                 width: selected ? 2.0 : 1.0,
               ),
             ),
@@ -203,13 +243,18 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
               selected: selected,
               selectedColor: SensoryColors.primary,
               onTap: () => setState(() => _selectedRoutine = routine),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 8,
+              ),
               title: Text(
                 routine.getLocalizedTitle(context),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: selected ? SensoryColors.primary : theme.colorScheme.onSurface,
+                  color: selected
+                      ? SensoryColors.primary
+                      : theme.colorScheme.onSurface,
                 ),
               ),
               subtitle: Padding(
@@ -218,17 +263,24 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
                   routine.getLocalizedDescription(context),
                   style: TextStyle(
                     fontSize: 12.5,
-                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: selected ? 0.9 : 0.7),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(
+                      alpha: selected ? 0.9 : 0.7,
+                    ),
                     height: 1.3,
                   ),
                 ),
               ),
               trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: selected
                       ? SensoryColors.primary.withValues(alpha: 0.2)
-                      : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
+                      : (isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.black.withValues(alpha: 0.03)),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -236,7 +288,11 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
                   style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.bold,
-                    color: selected ? SensoryColors.primary : theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
+                    color: selected
+                        ? SensoryColors.primary
+                        : theme.textTheme.bodyMedium?.color?.withValues(
+                            alpha: 0.8,
+                          ),
                   ),
                 ),
               ),
@@ -265,13 +321,17 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
                 height: 52,
                 decoration: BoxDecoration(
                   color: selected
-                      ? SensoryColors.primary.withValues(alpha: isDark ? 0.20 : 0.15)
+                      ? SensoryColors.primary.withValues(
+                          alpha: isDark ? 0.20 : 0.15,
+                        )
                       : cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: selected
                         ? SensoryColors.primary
-                        : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03)),
+                        : (isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03)),
                     width: selected ? 1.8 : 1.0,
                   ),
                 ),
@@ -281,7 +341,9 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: selected ? SensoryColors.primary : theme.colorScheme.onSurface,
+                      color: selected
+                          ? SensoryColors.primary
+                          : theme.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -303,7 +365,9 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -313,7 +377,8 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5),
         ),
         subtitle: Text(
-          l10n?.rmpSoundSubtitle ?? 'Tocar tonos auditivos al inicio de la contracción y al soltar la relajación.',
+          l10n?.rmpSoundSubtitle ??
+              'Tocar tonos auditivos al inicio de la contracción y al soltar la relajación.',
           style: const TextStyle(fontSize: 12.5),
         ),
         value: _soundEnabled,
@@ -333,10 +398,19 @@ class _RmpIntroScreenState extends State<RmpIntroScreen> {
       height: 58,
       child: ElevatedButton.icon(
         onPressed: _startRmp,
-        icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+        icon: const Icon(
+          Icons.play_arrow_rounded,
+          color: Colors.white,
+          size: 24,
+        ),
         label: Text(
-          AppLocalizations.of(context)?.rmpStartBtn ?? 'Iniciar Relajación Muscular',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+          AppLocalizations.of(context)?.rmpStartBtn ??
+              'Iniciar Relajación Muscular',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: SensoryColors.primary,

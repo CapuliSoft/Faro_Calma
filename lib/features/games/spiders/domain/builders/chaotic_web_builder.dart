@@ -20,26 +20,32 @@ List<WebThread> buildChaoticWeb({
 
   final List<Offset> nodes = [center];
   for (int i = 0; i < nodeCount - 1; i++) {
-    nodes.add(Offset(
-      w * 0.08 + rng.nextDouble() * (w * 0.84),
-      h * 0.05 + rng.nextDouble() * (h * 0.88),
-    ));
+    nodes.add(
+      Offset(
+        w * 0.08 + rng.nextDouble() * (w * 0.84),
+        h * 0.05 + rng.nextDouble() * (h * 0.88),
+      ),
+    );
   }
 
   // Connect each node to 2–3 nearest others
   for (int i = 0; i < nodes.length; i++) {
     final List<int> sorted = List.generate(nodes.length, (j) => j)
       ..remove(i)
-      ..sort((a, b) => (nodes[i] - nodes[a]).distance.compareTo(
-            (nodes[i] - nodes[b]).distance,
-          ));
+      ..sort(
+        (a, b) => (nodes[i] - nodes[a]).distance.compareTo(
+          (nodes[i] - nodes[b]).distance,
+        ),
+      );
 
     final int connections = 2 + rng.nextInt(2);
     for (int k = 0; k < connections && k < sorted.length; k++) {
       final int j = sorted[k];
-      final bool exists = threads.any((t) =>
-          (t.p1 == nodes[i] && t.p2 == nodes[j]) ||
-          (t.p1 == nodes[j] && t.p2 == nodes[i]));
+      final bool exists = threads.any(
+        (t) =>
+            (t.p1 == nodes[i] && t.p2 == nodes[j]) ||
+            (t.p1 == nodes[j] && t.p2 == nodes[i]),
+      );
       if (!exists) {
         threads.add(WebThread(p1: nodes[i], p2: nodes[j]));
       }

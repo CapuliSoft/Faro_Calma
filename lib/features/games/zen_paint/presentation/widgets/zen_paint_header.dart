@@ -3,7 +3,6 @@ import 'package:gtc6/core/theme/colors.dart';
 import '../controllers/zen_paint_controller.dart';
 import '../../domain/models/paint_models.dart';
 
-
 class ZenPaintHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onShowTemplateSelector;
   final VoidCallback onExit;
@@ -19,7 +18,6 @@ class ZenPaintHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final isEs = Localizations.localeOf(context).languageCode == 'es';
     final controller = ZenPaintController();
 
@@ -46,7 +44,9 @@ class ZenPaintHeader extends StatelessWidget implements PreferredSizeWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.fullscreen_rounded),
-              tooltip: isEs ? 'Modo Pro (Pantalla Completa)' : 'Pro Mode (Fullscreen)',
+              tooltip: isEs
+                  ? 'Modo Pro (Pantalla Completa)'
+                  : 'Pro Mode (Fullscreen)',
               onPressed: controller.toggleImmersiveMode,
             ),
             const SizedBox(width: 4),
@@ -81,8 +81,14 @@ class ZenPaintTemplateSelector extends StatelessWidget {
               : GestureDetector(
                   onTap: onShowTemplateSelector,
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 4,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: SensoryColors.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
@@ -92,8 +98,11 @@ class ZenPaintTemplateSelector extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.palette_outlined,
-                            size: 18, color: SensoryColors.primary),
+                        const Icon(
+                          Icons.palette_outlined,
+                          size: 18,
+                          color: SensoryColors.primary,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -109,8 +118,11 @@ class ZenPaintTemplateSelector extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const Icon(Icons.keyboard_arrow_down_rounded,
-                            size: 18, color: SensoryColors.primary),
+                        const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 18,
+                          color: SensoryColors.primary,
+                        ),
                       ],
                     ),
                   ),

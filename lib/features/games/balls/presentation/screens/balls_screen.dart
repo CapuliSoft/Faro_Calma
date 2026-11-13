@@ -21,7 +21,8 @@ class _BallsScreenState extends State<BallsScreen> {
 
   @override
   void dispose() {
-    final double elapsedMinutes = DateTime.now().difference(_startTime).inSeconds / 60.0;
+    final double elapsedMinutes =
+        DateTime.now().difference(_startTime).inSeconds / 60.0;
     // Log playtime session (min duration 0.05m to ignore accidental clicks)
     if (elapsedMinutes >= 0.05) {
       Future.microtask(() {
@@ -36,10 +37,9 @@ class _BallsScreenState extends State<BallsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)?.routineBallsTitle ?? 'Bolas Sensoriales',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          AppLocalizations.of(context)?.routineBallsTitle ??
+              'Bolas Sensoriales',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -48,9 +48,7 @@ class _BallsScreenState extends State<BallsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: const SafeArea(
-        child: BouncingBallsCanvas(),
-      ),
+      body: const SafeArea(child: BouncingBallsCanvas()),
     );
   }
 }

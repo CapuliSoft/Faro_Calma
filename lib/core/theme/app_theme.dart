@@ -24,22 +24,14 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           fontSize: 22,
         ),
-        bodyLarge: TextStyle(
-          color: SensoryColors.textDark,
-          fontSize: 16,
-        ),
-        bodyMedium: TextStyle(
-          color: SensoryColors.textLight,
-          fontSize: 14,
-        ),
+        bodyLarge: TextStyle(color: SensoryColors.textDark, fontSize: 16),
+        bodyMedium: TextStyle(color: SensoryColors.textLight, fontSize: 14),
       ),
       cardTheme: CardThemeData(
         color: SensoryColors.surface,
         elevation: 2,
         shadowColor: Colors.black.withValues(alpha: 0.05),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
     );
   }
@@ -79,9 +71,7 @@ class AppTheme {
         color: SensoryColors.surfaceDark,
         elevation: 1,
         shadowColor: Colors.black.withValues(alpha: 0.15),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
     );
   }

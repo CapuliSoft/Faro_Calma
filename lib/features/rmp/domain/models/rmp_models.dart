@@ -288,20 +288,34 @@ extension LocalizedMuscleGroup on MuscleGroup {
     final isEs = Localizations.localeOf(context).languageCode == 'es';
     if (isEs) return name;
     switch (id) {
-      case 'manoDerecha': return 'Right Hand and Forearm';
-      case 'manoIzquierda': return 'Left Hand and Forearm';
-      case 'bicepsDerecho': return 'Right Biceps';
-      case 'bicepsIzquierdo': return 'Left Biceps';
-      case 'frente': return 'Forehead';
-      case 'ojosNariz': return 'Eyes and Nose';
-      case 'mandibula': return 'Jaw';
-      case 'cuello': return 'Neck and Throat';
-      case 'hombros': return 'Shoulders';
-      case 'espalda': return 'Upper Back';
-      case 'abdomen': return 'Abdomen';
-      case 'muslos': return 'Thighs';
-      case 'pantorrillas': return 'Calves';
-      case 'pies': return 'Feet';
+      case 'manoDerecha':
+        return 'Right Hand and Forearm';
+      case 'manoIzquierda':
+        return 'Left Hand and Forearm';
+      case 'bicepsDerecho':
+        return 'Right Biceps';
+      case 'bicepsIzquierdo':
+        return 'Left Biceps';
+      case 'frente':
+        return 'Forehead';
+      case 'ojosNariz':
+        return 'Eyes and Nose';
+      case 'mandibula':
+        return 'Jaw';
+      case 'cuello':
+        return 'Neck and Throat';
+      case 'hombros':
+        return 'Shoulders';
+      case 'espalda':
+        return 'Upper Back';
+      case 'abdomen':
+        return 'Abdomen';
+      case 'muslos':
+        return 'Thighs';
+      case 'pantorrillas':
+        return 'Calves';
+      case 'pies':
+        return 'Feet';
     }
     return name;
   }
@@ -310,11 +324,16 @@ extension LocalizedMuscleGroup on MuscleGroup {
     final isEs = Localizations.localeOf(context).languageCode == 'es';
     if (isEs) return category;
     switch (category) {
-      case 'Brazos': return 'Arms';
-      case 'Cara y Cabeza': return 'Face and Head';
-      case 'Cuello y Hombros': return 'Neck and Shoulders';
-      case 'Torso': return 'Torso';
-      case 'Piernas y Pies': return 'Legs and Feet';
+      case 'Brazos':
+        return 'Arms';
+      case 'Cara y Cabeza':
+        return 'Face and Head';
+      case 'Cuello y Hombros':
+        return 'Neck and Shoulders';
+      case 'Torso':
+        return 'Torso';
+      case 'Piernas y Pies':
+        return 'Legs and Feet';
     }
     return category;
   }

@@ -50,15 +50,23 @@ class _SoundTherapySelectorScreenState
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 150),
           children: [
-            _buildSectionLabel(isEs ? 'SELECCIONAR FRECUENCIA' : 'SELECT FREQUENCY'),
+            _buildSectionLabel(
+              isEs ? 'SELECCIONAR FRECUENCIA' : 'SELECT FREQUENCY',
+            ),
             const SizedBox(height: 12),
             _buildFrequencyGrid(),
             const SizedBox(height: 24),
-            _buildSectionLabel(isEs ? 'RITMOS BINAURALES (OPCIONAL)' : 'BINAURAL BEATS (OPTIONAL)'),
+            _buildSectionLabel(
+              isEs
+                  ? 'RITMOS BINAURALES (OPCIONAL)'
+                  : 'BINAURAL BEATS (OPTIONAL)',
+            ),
             const SizedBox(height: 12),
             _buildBinauralRow(),
             const SizedBox(height: 24),
-            _buildSectionLabel(isEs ? 'MODULACIÓN (OPCIONAL)' : 'MODULATION (OPTIONAL)'),
+            _buildSectionLabel(
+              isEs ? 'MODULACIÓN (OPCIONAL)' : 'MODULATION (OPTIONAL)',
+            ),
             const SizedBox(height: 12),
             _buildModulationRow(),
             const SizedBox(height: 24),
@@ -86,14 +94,15 @@ class _SoundTherapySelectorScreenState
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.graphic_eq_rounded, color: SensoryColors.secondary, size: 22),
+          const Icon(
+            Icons.graphic_eq_rounded,
+            color: SensoryColors.secondary,
+            size: 22,
+          ),
           const SizedBox(width: 8),
           Text(
             l10n?.soundTherapyTitle ?? 'Terapia de Sonido',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
         ],
       ),
@@ -122,7 +131,9 @@ class _SoundTherapySelectorScreenState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.05);
     final textMediumColor = theme.textTheme.bodyMedium?.color;
 
     return GridView.builder(
@@ -260,7 +271,9 @@ class _SoundTherapySelectorScreenState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.05);
 
     return GestureDetector(
       onTap: onTap,
@@ -291,7 +304,9 @@ class _SoundTherapySelectorScreenState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final borderColor = isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.05);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -302,7 +317,11 @@ class _SoundTherapySelectorScreenState
       ),
       child: Row(
         children: [
-          const Icon(Icons.volume_down_rounded, color: SensoryColors.secondary, size: 20),
+          const Icon(
+            Icons.volume_down_rounded,
+            color: SensoryColors.secondary,
+            size: 20,
+          ),
           Expanded(
             child: Slider(
               value: _volume,
@@ -311,7 +330,11 @@ class _SoundTherapySelectorScreenState
               inactiveColor: theme.scaffoldBackgroundColor,
             ),
           ),
-          const Icon(Icons.volume_up_rounded, color: SensoryColors.secondary, size: 22),
+          const Icon(
+            Icons.volume_up_rounded,
+            color: SensoryColors.secondary,
+            size: 22,
+          ),
           const SizedBox(width: 8),
           SizedBox(
             width: 44,
@@ -339,8 +362,13 @@ class _SoundTherapySelectorScreenState
           onPressed: _startSession,
           icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
           label: Text(
-            AppLocalizations.of(context)?.soundStartBtn ?? 'Iniciar Terapia de Sonido',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+            AppLocalizations.of(context)?.soundStartBtn ??
+                'Iniciar Terapia de Sonido',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: SensoryColors.primary,
@@ -368,7 +396,8 @@ class _SoundTherapySelectorScreenState
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: Text(
-          l10n?.soundInfoContent ?? 'La terapia de sonido utiliza frecuencias específicas para inducir estados de relajación, enfoque o sueño profundo...',
+          l10n?.soundInfoContent ??
+              'La terapia de sonido utiliza frecuencias específicas para inducir estados de relajación, enfoque o sueño profundo...',
           style: TextStyle(color: theme.textTheme.bodyMedium?.color),
         ),
         actions: [

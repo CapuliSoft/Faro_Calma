@@ -21,7 +21,8 @@ class _SpidersScreenState extends State<SpidersScreen> {
 
   @override
   void dispose() {
-    final double elapsedMinutes = DateTime.now().difference(_startTime).inSeconds / 60.0;
+    final double elapsedMinutes =
+        DateTime.now().difference(_startTime).inSeconds / 60.0;
     if (elapsedMinutes >= 0.05) {
       Future.microtask(() {
         ProgressService.instance.recordSession('spiders', elapsedMinutes);
@@ -35,10 +36,9 @@ class _SpidersScreenState extends State<SpidersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)?.routineSpidersTitle ?? 'Arañas Relajantes',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          AppLocalizations.of(context)?.routineSpidersTitle ??
+              'Arañas Relajantes',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -47,9 +47,7 @@ class _SpidersScreenState extends State<SpidersScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: const SafeArea(
-        child: SpidersCanvas(),
-      ),
+      body: const SafeArea(child: SpidersCanvas()),
     );
   }
 }

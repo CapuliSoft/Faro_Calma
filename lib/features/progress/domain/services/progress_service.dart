@@ -30,7 +30,7 @@ class ProgressService extends ChangeNotifier {
     } else {
       _stats = UserStats.empty();
     }
-    
+
     _initialized = true;
     checkAndVerifyStreak();
     notifyListeners();
@@ -41,7 +41,10 @@ class ProgressService extends ChangeNotifier {
     if (_stats.activeDays.isEmpty) return;
 
     final todayStr = DateTime.now().toIso8601String().split('T')[0];
-    final yesterdayStr = DateTime.now().subtract(const Duration(days: 1)).toIso8601String().split('T')[0];
+    final yesterdayStr = DateTime.now()
+        .subtract(const Duration(days: 1))
+        .toIso8601String()
+        .split('T')[0];
 
     // Sort active days to ensure order
     final sortedDays = List<String>.from(_stats.activeDays)..sort();
@@ -65,7 +68,10 @@ class ProgressService extends ChangeNotifier {
 
     int currentStreak = 1;
     if (_stats.activeDays.isNotEmpty) {
-      final yesterdayStr = DateTime.now().subtract(const Duration(days: 1)).toIso8601String().split('T')[0];
+      final yesterdayStr = DateTime.now()
+          .subtract(const Duration(days: 1))
+          .toIso8601String()
+          .split('T')[0];
       final lastActiveStr = _stats.activeDays.last; // Since it was sorted
 
       if (lastActiveStr == yesterdayStr) {
@@ -77,7 +83,9 @@ class ProgressService extends ChangeNotifier {
       }
     }
 
-    final newLongest = currentStreak > _stats.longestStreak ? currentStreak : _stats.longestStreak;
+    final newLongest = currentStreak > _stats.longestStreak
+        ? currentStreak
+        : _stats.longestStreak;
 
     _stats = _stats.copyWith(
       activeDays: newActiveDays,

@@ -6,10 +6,7 @@ import 'paint_toolbar.dart';
 class ZenPaintImmersiveToolbar extends StatelessWidget {
   final Animation<double> immersiveAnim;
 
-  const ZenPaintImmersiveToolbar({
-    super.key,
-    required this.immersiveAnim,
-  });
+  const ZenPaintImmersiveToolbar({super.key, required this.immersiveAnim});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +22,12 @@ class ZenPaintImmersiveToolbar extends StatelessWidget {
         }
 
         final screenSize = MediaQuery.of(context).size;
-        final offset = controller.floatingToolbarOffset ?? Offset(
-          math.max(12.0, (screenSize.width - 350) / 2),
-          screenSize.height - 180,
-        );
+        final offset =
+            controller.floatingToolbarOffset ??
+            Offset(
+              math.max(12.0, (screenSize.width - 350) / 2),
+              screenSize.height - 180,
+            );
 
         return Positioned(
           left: offset.dx,
@@ -38,7 +37,9 @@ class ZenPaintImmersiveToolbar extends StatelessWidget {
             child: Container(
               width: math.min(360, screenSize.width - 40),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.65),
+                color: (isDark ? Colors.black : Colors.white).withValues(
+                  alpha: 0.65,
+                ),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
@@ -60,17 +61,32 @@ class ZenPaintImmersiveToolbar extends StatelessWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onPanUpdate: (details) {
-                      final current = controller.floatingToolbarOffset ?? Offset(
-                        math.max(12.0, (screenSize.width - 350) / 2),
-                        screenSize.height - 180,
+                      final current =
+                          controller.floatingToolbarOffset ??
+                          Offset(
+                            math.max(12.0, (screenSize.width - 350) / 2),
+                            screenSize.height - 180,
+                          );
+                      controller.updateFloatingToolbarOffset(
+                        Offset(
+                          (current.dx + details.delta.dx).clamp(
+                            0.0,
+                            screenSize.width - 80,
+                          ),
+                          (current.dy + details.delta.dy).clamp(
+                            0.0,
+                            screenSize.height - 80,
+                          ),
+                        ),
                       );
-                      controller.updateFloatingToolbarOffset(Offset(
-                        (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 80),
-                        (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 80),
-                      ));
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 8, bottom: 4, left: 20, right: 20),
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                        bottom: 4,
+                        left: 20,
+                        right: 20,
+                      ),
                       child: Container(
                         width: 36,
                         height: 4,

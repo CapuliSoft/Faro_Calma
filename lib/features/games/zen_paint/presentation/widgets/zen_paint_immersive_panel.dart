@@ -27,7 +27,9 @@ class ZenPaintImmersivePanel extends StatelessWidget {
         if (!controller.immersiveMode) return const SizedBox.shrink();
 
         final screenSize = MediaQuery.of(context).size;
-        final offset = controller.floatingPanelOffset ?? Offset(screenSize.width - 58, screenSize.height / 2 - 140);
+        final offset =
+            controller.floatingPanelOffset ??
+            Offset(screenSize.width - 58, screenSize.height / 2 - 140);
 
         return Positioned(
           left: offset.dx,
@@ -37,7 +39,9 @@ class ZenPaintImmersivePanel extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.55),
+                color: (isDark ? Colors.black : Colors.white).withValues(
+                  alpha: 0.55,
+                ),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
                   color: isDark
@@ -59,14 +63,32 @@ class ZenPaintImmersivePanel extends StatelessWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onPanUpdate: (details) {
-                      final current = controller.floatingPanelOffset ?? Offset(screenSize.width - 58, screenSize.height / 2 - 140);
-                      controller.updateFloatingPanelOffset(Offset(
-                        (current.dx + details.delta.dx).clamp(0.0, screenSize.width - 54),
-                        (current.dy + details.delta.dy).clamp(0.0, screenSize.height - 280),
-                      ));
+                      final current =
+                          controller.floatingPanelOffset ??
+                          Offset(
+                            screenSize.width - 58,
+                            screenSize.height / 2 - 140,
+                          );
+                      controller.updateFloatingPanelOffset(
+                        Offset(
+                          (current.dx + details.delta.dx).clamp(
+                            0.0,
+                            screenSize.width - 54,
+                          ),
+                          (current.dy + details.delta.dy).clamp(
+                            0.0,
+                            screenSize.height - 280,
+                          ),
+                        ),
+                      );
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 4, bottom: 10, left: 10, right: 10),
+                      padding: const EdgeInsets.only(
+                        top: 4,
+                        bottom: 10,
+                        left: 10,
+                        right: 10,
+                      ),
                       child: Container(
                         width: 24,
                         height: 4,
@@ -89,7 +111,9 @@ class ZenPaintImmersivePanel extends StatelessWidget {
                   const SizedBox(height: 6),
                   _buildFloatingButton(
                     context: context,
-                    icon: controller.showImmersiveToolbar ? Icons.brush_rounded : Icons.brush_outlined,
+                    icon: controller.showImmersiveToolbar
+                        ? Icons.brush_rounded
+                        : Icons.brush_outlined,
                     tooltip: isEs ? 'Herramientas' : 'Tools',
                     onTap: controller.toggleImmersiveToolbar,
                     isActive: controller.showImmersiveToolbar,
@@ -100,7 +124,9 @@ class ZenPaintImmersivePanel extends StatelessWidget {
                     context: context,
                     icon: Icons.save_alt_rounded,
                     tooltip: isEs ? 'Guardar PNG' : 'Save PNG',
-                    onTap: controller.canUndo ? onExport : null, // Reusing canUndo as it checks completedStrokes.isNotEmpty
+                    onTap: controller.canUndo
+                        ? onExport
+                        : null, // Reusing canUndo as it checks completedStrokes.isNotEmpty
                     isDark: isDark,
                   ),
                   const SizedBox(height: 6),
@@ -136,8 +162,6 @@ class ZenPaintImmersivePanel extends StatelessWidget {
     bool isActive = false,
     required bool isDark,
   }) {
-
-
     return GestureDetector(
       onTap: onTap,
       child: Tooltip(
@@ -149,7 +173,9 @@ class ZenPaintImmersivePanel extends StatelessWidget {
           decoration: BoxDecoration(
             color: isActive
                 ? SensoryColors.primary
-                : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
+                : (isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.05)),
             shape: BoxShape.circle,
           ),
           child: Icon(

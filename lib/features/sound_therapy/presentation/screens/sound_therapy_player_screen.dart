@@ -47,7 +47,10 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
 
     _engine.onCompleted.then((_) {
       if (!mounted) return;
-      ProgressService.instance.recordSession('sound_therapy', widget.config.durationMinutes.toDouble());
+      ProgressService.instance.recordSession(
+        'sound_therapy',
+        widget.config.durationMinutes.toDouble(),
+      );
       _sessionLogged = true;
       _showCompletedDialog();
     });
@@ -58,10 +61,14 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
   @override
   void dispose() {
     if (!_sessionLogged) {
-      final double elapsedMinutes = DateTime.now().difference(_startTime).inSeconds / 60.0;
+      final double elapsedMinutes =
+          DateTime.now().difference(_startTime).inSeconds / 60.0;
       if (elapsedMinutes >= 0.05) {
         Future.microtask(() {
-          ProgressService.instance.recordSession('sound_therapy', elapsedMinutes);
+          ProgressService.instance.recordSession(
+            'sound_therapy',
+            elapsedMinutes,
+          );
         });
       }
     }
@@ -224,35 +231,36 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
           height: 280,
           child: Stack(
             alignment: Alignment.center,
-            children: List.generate(4, (i) {
-              final ringScale = 0.55 + (i * 0.15) + (t * 0.05);
-              final opacity = (1.0 - i * 0.2) * (_isPaused ? 0.4 : 1.0);
-              return Opacity(
-                opacity: opacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: 280 * ringScale,
-                  height: 280 * ringScale,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.10 + i * 0.03),
+            children:
+                List.generate(4, (i) {
+                  final ringScale = 0.55 + (i * 0.15) + (t * 0.05);
+                  final opacity = (1.0 - i * 0.2) * (_isPaused ? 0.4 : 1.0);
+                  return Opacity(
+                    opacity: opacity.clamp(0.0, 1.0),
+                    child: Container(
+                      width: 280 * ringScale,
+                      height: 280 * ringScale,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.10 + i * 0.03),
+                      ),
+                    ),
+                  );
+                })..add(
+                  Container(
+                    width: 110,
+                    height: 110,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: Icon(
+                      config.frequency.icon,
+                      size: 46,
+                      color: _bgBottom,
+                    ),
                   ),
                 ),
-              );
-            })..add(
-                Container(
-                  width: 110,
-                  height: 110,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: Icon(
-                    config.frequency.icon,
-                    size: 46,
-                    color: _bgBottom,
-                  ),
-                ),
-              ),
           ),
         );
       },
@@ -272,7 +280,9 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
       child: Column(
         children: [
           Text(
-            isEs ? 'Encuentra una posición cómoda' : 'Find a comfortable position',
+            isEs
+                ? 'Encuentra una posición cómoda'
+                : 'Find a comfortable position',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
@@ -298,12 +308,18 @@ class _SoundTherapyPlayerScreenState extends State<SoundTherapyPlayerScreen>
               const Icon(Icons.timer_outlined, color: Colors.white70, size: 14),
               const SizedBox(width: 6),
               Text(
-                isEs ? 'Sesión de ${config.durationMinutes} min' : 'Session of ${config.durationMinutes} min',
+                isEs
+                    ? 'Sesión de ${config.durationMinutes} min'
+                    : 'Session of ${config.durationMinutes} min',
                 style: const TextStyle(color: Colors.white70, fontSize: 12.5),
               ),
               if (config.binauralBeat != null) ...[
                 const SizedBox(width: 14),
-                const Icon(Icons.graphic_eq_rounded, color: Colors.white70, size: 14),
+                const Icon(
+                  Icons.graphic_eq_rounded,
+                  color: Colors.white70,
+                  size: 14,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   config.binauralBeat!.label,

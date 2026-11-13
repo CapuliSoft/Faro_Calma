@@ -12,13 +12,20 @@ class CanvasExportService {
   /// resolution and saves it to the device photo gallery.
   ///
   /// Returns `true` if the image was saved successfully.
-  static Future<bool> exportAndSave(GlobalKey boundaryKey, {double pixelRatio = 3.0}) async {
+  static Future<bool> exportAndSave(
+    GlobalKey boundaryKey, {
+    double pixelRatio = 3.0,
+  }) async {
     try {
-      final boundary = boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final boundary =
+          boundaryKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
       if (boundary == null) return false;
 
       final ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
-      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
       if (byteData == null) return false;
 
       final Uint8List pngBytes = byteData.buffer.asUint8List();

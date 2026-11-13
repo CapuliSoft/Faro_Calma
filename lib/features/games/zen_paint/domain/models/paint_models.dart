@@ -20,11 +20,31 @@ class DrawingStroke {
 }
 
 enum TemplateType {
-  blank('Lienzo Libre', 'Dibuja con total libertad en un lienzo limpio', Icons.draw_rounded),
-  mandala('Mandala Zen', 'Simetría circular relajante con pétalos y anillos para colorear', Icons.filter_vintage_rounded),
-  mountains('Paisaje de Montañas', 'Cumbres tranquilas con sol naciente y nubes suaves', Icons.landscape_rounded),
-  lotus('Flor de Loto', 'Pétalos sagrados flotando sobre agua serena', Icons.spa_rounded),
-  waves('Olas de Mar', 'Fluidez oceánica al estilo tradicional zen', Icons.water_rounded);
+  blank(
+    'Lienzo Libre',
+    'Dibuja con total libertad en un lienzo limpio',
+    Icons.draw_rounded,
+  ),
+  mandala(
+    'Mandala Zen',
+    'Simetría circular relajante con pétalos y anillos para colorear',
+    Icons.filter_vintage_rounded,
+  ),
+  mountains(
+    'Paisaje de Montañas',
+    'Cumbres tranquilas con sol naciente y nubes suaves',
+    Icons.landscape_rounded,
+  ),
+  lotus(
+    'Flor de Loto',
+    'Pétalos sagrados flotando sobre agua serena',
+    Icons.spa_rounded,
+  ),
+  waves(
+    'Olas de Mar',
+    'Fluidez oceánica al estilo tradicional zen',
+    Icons.water_rounded,
+  );
 
   final String title;
   final String description;
@@ -80,34 +100,50 @@ class ArtTemplate {
       final double angle = i * 2 * math.pi / petals;
       final double nextAngle = (i + 1) * 2 * math.pi / petals;
 
-      final Offset p1 = center + Offset(math.cos(angle) * radius * 0.5, math.sin(angle) * radius * 0.5);
-      final Offset p3 = center + Offset(math.cos(nextAngle) * radius * 0.5, math.sin(nextAngle) * radius * 0.5);
+      final Offset p1 =
+          center +
+          Offset(
+            math.cos(angle) * radius * 0.5,
+            math.sin(angle) * radius * 0.5,
+          );
+      final Offset p3 =
+          center +
+          Offset(
+            math.cos(nextAngle) * radius * 0.5,
+            math.sin(nextAngle) * radius * 0.5,
+          );
 
       final Path petalPath = Path()
         ..moveTo(p1.dx, p1.dy)
         ..quadraticBezierTo(
-            center.dx + math.cos((angle + nextAngle) / 2) * radius * 1.1,
-            center.dy + math.sin((angle + nextAngle) / 2) * radius * 1.1,
-            p3.dx,
-            p3.dy);
+          center.dx + math.cos((angle + nextAngle) / 2) * radius * 1.1,
+          center.dy + math.sin((angle + nextAngle) / 2) * radius * 1.1,
+          p3.dx,
+          p3.dy,
+        );
       canvas.drawPath(petalPath, paint);
 
       // Inner petals
       final Path innerPath = Path()
         ..moveTo(center.dx, center.dy)
         ..quadraticBezierTo(
-            center.dx + math.cos((angle + nextAngle) / 2) * radius * 0.6,
-            center.dy + math.sin((angle + nextAngle) / 2) * radius * 0.6,
-            p3.dx,
-            p3.dy);
+          center.dx + math.cos((angle + nextAngle) / 2) * radius * 0.6,
+          center.dy + math.sin((angle + nextAngle) / 2) * radius * 0.6,
+          p3.dx,
+          p3.dy,
+        );
       canvas.drawPath(innerPath, paint);
     }
   }
 
   void _drawMountains(Canvas canvas, Size size, Paint paint) {
     final Path sunPath = Path()
-      ..addOval(Rect.fromCircle(
-          center: Offset(size.width * 0.75, size.height * 0.28), radius: 45));
+      ..addOval(
+        Rect.fromCircle(
+          center: Offset(size.width * 0.75, size.height * 0.28),
+          radius: 45,
+        ),
+      );
     canvas.drawPath(sunPath, paint);
 
     // Mountain 1 (Left background)
@@ -132,12 +168,20 @@ class ArtTemplate {
     canvas.drawPath(m3, paint);
 
     // Horizon line
-    canvas.drawLine(Offset(0, size.height * 0.65), Offset(size.width, size.height * 0.65), paint);
+    canvas.drawLine(
+      Offset(0, size.height * 0.65),
+      Offset(size.width, size.height * 0.65),
+      paint,
+    );
 
     // Water ripples below horizon
     for (int i = 1; i <= 4; i++) {
       final double y = size.height * 0.65 + (i * 25);
-      canvas.drawLine(Offset(size.width * 0.15 * i, y), Offset(size.width * (1 - 0.15 * i), y), paint);
+      canvas.drawLine(
+        Offset(size.width * 0.15 * i, y),
+        Offset(size.width * (1 - 0.15 * i), y),
+        paint,
+      );
     }
   }
 
@@ -145,8 +189,18 @@ class ArtTemplate {
     // Center petal
     final Path centerPetal = Path()
       ..moveTo(center.dx, center.dy + radius * 0.5)
-      ..quadraticBezierTo(center.dx - radius * 0.4, center.dy, center.dx, center.dy - radius * 0.8)
-      ..quadraticBezierTo(center.dx + radius * 0.4, center.dy, center.dx, center.dy + radius * 0.5);
+      ..quadraticBezierTo(
+        center.dx - radius * 0.4,
+        center.dy,
+        center.dx,
+        center.dy - radius * 0.8,
+      )
+      ..quadraticBezierTo(
+        center.dx + radius * 0.4,
+        center.dy,
+        center.dx,
+        center.dy + radius * 0.5,
+      );
     canvas.drawPath(centerPetal, paint);
 
     // Left petals
@@ -154,8 +208,18 @@ class ArtTemplate {
       final double spread = i * 0.28;
       final Path leftPetal = Path()
         ..moveTo(center.dx, center.dy + radius * 0.5)
-        ..quadraticBezierTo(center.dx - radius * (0.5 + spread), center.dy + radius * 0.1, center.dx - radius * (0.3 + spread), center.dy - radius * (0.6 - spread * 0.6))
-        ..quadraticBezierTo(center.dx - radius * 0.2, center.dy, center.dx, center.dy + radius * 0.5);
+        ..quadraticBezierTo(
+          center.dx - radius * (0.5 + spread),
+          center.dy + radius * 0.1,
+          center.dx - radius * (0.3 + spread),
+          center.dy - radius * (0.6 - spread * 0.6),
+        )
+        ..quadraticBezierTo(
+          center.dx - radius * 0.2,
+          center.dy,
+          center.dx,
+          center.dy + radius * 0.5,
+        );
       canvas.drawPath(leftPetal, paint);
     }
 
@@ -164,15 +228,30 @@ class ArtTemplate {
       final double spread = i * 0.28;
       final Path rightPetal = Path()
         ..moveTo(center.dx, center.dy + radius * 0.5)
-        ..quadraticBezierTo(center.dx + radius * (0.5 + spread), center.dy + radius * 0.1, center.dx + radius * (0.3 + spread), center.dy - radius * (0.6 - spread * 0.6))
-        ..quadraticBezierTo(center.dx + radius * 0.2, center.dy, center.dx, center.dy + radius * 0.5);
+        ..quadraticBezierTo(
+          center.dx + radius * (0.5 + spread),
+          center.dy + radius * 0.1,
+          center.dx + radius * (0.3 + spread),
+          center.dy - radius * (0.6 - spread * 0.6),
+        )
+        ..quadraticBezierTo(
+          center.dx + radius * 0.2,
+          center.dy,
+          center.dx,
+          center.dy + radius * 0.5,
+        );
       canvas.drawPath(rightPetal, paint);
     }
 
     // Water base curves
     final Path water = Path()
       ..moveTo(center.dx - radius * 1.1, center.dy + radius * 0.55)
-      ..quadraticBezierTo(center.dx, center.dy + radius * 0.7, center.dx + radius * 1.1, center.dy + radius * 0.55);
+      ..quadraticBezierTo(
+        center.dx,
+        center.dy + radius * 0.7,
+        center.dx + radius * 1.1,
+        center.dy + radius * 0.55,
+      );
     canvas.drawPath(water, paint);
   }
 
@@ -183,14 +262,17 @@ class ArtTemplate {
     for (int row = 0; row < 5; row++) {
       final double y = h * 0.25 + (row * h * 0.12);
       final Path wave = Path()..moveTo(0, y);
-      
+
       final int segments = 4;
       final double segW = w / segments;
       for (int i = 0; i < segments; i++) {
         wave.cubicTo(
-          i * segW + segW * 0.25, y - 35,
-          i * segW + segW * 0.75, y + 35,
-          (i + 1) * segW, y,
+          i * segW + segW * 0.25,
+          y - 35,
+          i * segW + segW * 0.75,
+          y + 35,
+          (i + 1) * segW,
+          y,
         );
       }
       canvas.drawPath(wave, paint);
@@ -210,11 +292,16 @@ extension LocalizedTemplateType on TemplateType {
     final isEs = Localizations.localeOf(context).languageCode == 'es';
     if (isEs) return title;
     switch (this) {
-      case TemplateType.blank: return 'Blank Canvas';
-      case TemplateType.mandala: return 'Zen Mandala';
-      case TemplateType.mountains: return 'Mountain Landscape';
-      case TemplateType.lotus: return 'Lotus Flower';
-      case TemplateType.waves: return 'Sea Waves';
+      case TemplateType.blank:
+        return 'Blank Canvas';
+      case TemplateType.mandala:
+        return 'Zen Mandala';
+      case TemplateType.mountains:
+        return 'Mountain Landscape';
+      case TemplateType.lotus:
+        return 'Lotus Flower';
+      case TemplateType.waves:
+        return 'Sea Waves';
     }
   }
 
@@ -222,11 +309,16 @@ extension LocalizedTemplateType on TemplateType {
     final isEs = Localizations.localeOf(context).languageCode == 'es';
     if (isEs) return description;
     switch (this) {
-      case TemplateType.blank: return 'Draw with total freedom on a clean canvas';
-      case TemplateType.mandala: return 'Relaxing circular symmetry with petals and rings to color';
-      case TemplateType.mountains: return 'Peaceful peaks with a rising sun and soft clouds';
-      case TemplateType.lotus: return 'Sacred petals floating on serene water';
-      case TemplateType.waves: return 'Ocean fluidity in traditional Zen style';
+      case TemplateType.blank:
+        return 'Draw with total freedom on a clean canvas';
+      case TemplateType.mandala:
+        return 'Relaxing circular symmetry with petals and rings to color';
+      case TemplateType.mountains:
+        return 'Peaceful peaks with a rising sun and soft clouds';
+      case TemplateType.lotus:
+        return 'Sacred petals floating on serene water';
+      case TemplateType.waves:
+        return 'Ocean fluidity in traditional Zen style';
     }
   }
 }

@@ -119,7 +119,12 @@ class _ZenPaintPainter extends CustomPainter {
     for (int i = 1; i < stroke.points.length - 1; i++) {
       final Offset p0 = stroke.points[i];
       final Offset p1 = stroke.points[i + 1];
-      path.quadraticBezierTo(p0.dx, p0.dy, (p0.dx + p1.dx) / 2, (p0.dy + p1.dy) / 2);
+      path.quadraticBezierTo(
+        p0.dx,
+        p0.dy,
+        (p0.dx + p1.dx) / 2,
+        (p0.dy + p1.dy) / 2,
+      );
     }
 
     if (stroke.points.length > 1) {

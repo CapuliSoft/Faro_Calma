@@ -191,14 +191,22 @@ class SpiderWebPainter extends CustomPainter {
         Path()
           ..moveTo(0, 0)
           ..quadraticBezierTo(
-              legEnd1.dx * 0.5, legEnd1.dy * 0.4, legEnd1.dx, legEnd1.dy),
+            legEnd1.dx * 0.5,
+            legEnd1.dy * 0.4,
+            legEnd1.dx,
+            legEnd1.dy,
+          ),
         legPaint,
       );
       canvas.drawPath(
         Path()
           ..moveTo(0, 0)
           ..quadraticBezierTo(
-              legEnd2.dx * 0.5, legEnd2.dy * 0.4, legEnd2.dx, legEnd2.dy),
+            legEnd2.dx * 0.5,
+            legEnd2.dy * 0.4,
+            legEnd2.dx,
+            legEnd2.dy,
+          ),
         legPaint,
       );
     }

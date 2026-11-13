@@ -11,6 +11,7 @@ import 'package:gtc6/features/rmp/presentation/screens/rmp_intro_screen.dart';
 import 'package:gtc6/features/breathing/presentation/screens/breathing_intro_screen.dart';
 import 'package:gtc6/features/games/zen_paint/presentation/screens/zen_paint_screen.dart';
 import 'package:gtc6/features/games/fidget_spinner/presentation/screens/fidget_spinner_screen.dart';
+import 'package:gtc6/features/home/presentation/widgets/home_drawer.dart';
 import 'package:gtc6/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,6 +22,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final routinesList = _getRoutines(l10n);
 
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: const HomeDrawer(),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -52,12 +57,14 @@ class _HomeScreenState extends State<HomeScreen> {
             final double cardSpacing = 14.0;
             final double totalSpacing = cardSpacing * (columnCount - 1);
             final double cardWidth =
-                ((constraints.maxWidth - (horizontalPadding * 2) - totalSpacing) /
-                    columnCount).clamp(0.0, double.infinity);
+                ((constraints.maxWidth -
+                            (horizontalPadding * 2) -
+                            totalSpacing) /
+                        columnCount)
+                    .clamp(0.0, double.infinity);
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                  24.0, 28.0, 24.0, 110.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 28.0, 24.0, 110.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -65,27 +72,39 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'GTC6',
-                            style: theme.textTheme.headlineLarge?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2,
+                      AnimatedDrawerButton(
+                        tooltip: MaterialLocalizations.of(
+                          context,
+                        ).openAppDrawerTooltip,
+                        onPressed: () {
+                          _scaffoldKey.currentState?.openDrawer();
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'GTC6',
+                              style: theme.textTheme.headlineLarge?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.2,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            l10n?.appSubtitle ?? 'Rutinas de regulación y bienestar sensorial',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: isDark
-                                  ? SensoryColors.textLightSecondary
-                                  : SensoryColors.textLight,
-                              fontWeight: FontWeight.w600,
+                            const SizedBox(height: 2),
+                            Text(
+                              l10n?.appSubtitle ??
+                                  'Rutinas de regulación y bienestar sensorial',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: isDark
+                                    ? SensoryColors.textLightSecondary
+                                    : SensoryColors.textLight,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       IconButton(
                         icon: Icon(
@@ -122,10 +141,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         _buildGuideCard(
                           number: '1',
-                          title: l10n?.guide1Title ?? 'Calmar la Ansiedad al Instante',
-                          subtitle: l10n?.guide1Subtitle ?? 'Respiración Científica Guiada',
+                          title:
+                              l10n?.guide1Title ??
+                              'Calmar la Ansiedad al Instante',
+                          subtitle:
+                              l10n?.guide1Subtitle ??
+                              'Respiración Científica Guiada',
                           description:
-                              l10n?.guide1Desc ?? 'Patrones con aval neurocientífico (4-7-8, Box Breathing, Huberman) para bajar el cortisol en minutos.',
+                              l10n?.guide1Desc ??
+                              'Patrones con aval neurocientífico (4-7-8, Box Breathing, Huberman) para bajar el cortisol en minutos.',
                           icon: Icons.air_rounded,
                           color: SensoryColors.zenSage,
                         ),
@@ -133,29 +157,42 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildGuideCard(
                           number: '2',
                           title: l10n?.guide2Title ?? 'Liberar Tensión Física',
-                          subtitle: l10n?.guide2Subtitle ?? 'Relajación Muscular Progresiva',
+                          subtitle:
+                              l10n?.guide2Subtitle ??
+                              'Relajación Muscular Progresiva',
                           description:
-                              l10n?.guide2Desc ?? 'Rutina Jacobson guiada paso a paso para soltar la rigidez en cuello, hombros, espalda y rostro.',
+                              l10n?.guide2Desc ??
+                              'Rutina Jacobson guiada paso a paso para soltar la rigidez en cuello, hombros, espalda y rostro.',
                           icon: Icons.accessibility_new_rounded,
                           color: SensoryColors.zenTeal,
                         ),
                         const SizedBox(width: 14),
                         _buildGuideCard(
                           number: '3',
-                          title: l10n?.guide3Title ?? 'Sincronizar tus Ondas Cerebrales',
-                          subtitle: l10n?.guide3Subtitle ?? 'Terapia de Sonido Binaural',
+                          title:
+                              l10n?.guide3Title ??
+                              'Sincronizar tus Ondas Cerebrales',
+                          subtitle:
+                              l10n?.guide3Subtitle ??
+                              'Terapia de Sonido Binaural',
                           description:
-                              l10n?.guide3Desc ?? 'Frecuencias curativas y ritmos binaurales diseñados para enfocar tu mente o conciliar el sueño profundo.',
+                              l10n?.guide3Desc ??
+                              'Frecuencias curativas y ritmos binaurales diseñados para enfocar tu mente o conciliar el sueño profundo.',
                           icon: Icons.graphic_eq_rounded,
                           color: SensoryColors.zenIndigo,
                         ),
                         const SizedBox(width: 14),
                         _buildGuideCard(
                           number: '4',
-                          title: l10n?.guide4Title ?? 'Enfoque y Terapia de Arte Zen',
-                          subtitle: l10n?.guide4Subtitle ?? 'Mindfulness Sensorial Activo',
+                          title:
+                              l10n?.guide4Title ??
+                              'Enfoque y Terapia de Arte Zen',
+                          subtitle:
+                              l10n?.guide4Subtitle ??
+                              'Mindfulness Sensorial Activo',
                           description:
-                              l10n?.guide4Desc ?? 'Colorea mandalas, revienta burbujas o traza telarañas para disipar el estrés táctil y mental en el presente.',
+                              l10n?.guide4Desc ??
+                              'Colorea mandalas, revienta burbujas o traza telarañas para disipar el estrés táctil y mental en el presente.',
                           icon: Icons.palette_rounded,
                           color: SensoryColors.zenAmber,
                         ),
@@ -182,7 +219,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: SensoryColors.primary.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
@@ -262,10 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 32,
                 height: 32,
                 alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
                 child: Text(
                   number,
                   style: const TextStyle(
@@ -294,10 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 10),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -381,7 +414,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 14,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.35),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.35,
+                      ),
                     ),
                   ],
                 ),
@@ -449,7 +484,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineBreathingTitle ?? 'Respiración Científica',
     category: l10n?.routineBreathingCat ?? 'Sistema Nervioso',
     description:
-        l10n?.routineBreathingDesc ?? 'Patrones con aval neurocientífico (4-7-8, Box Breathing, Huberman) para regular el ritmo vagal y bajar el cortisol.',
+        l10n?.routineBreathingDesc ??
+        'Patrones con aval neurocientífico (4-7-8, Box Breathing, Huberman) para regular el ritmo vagal y bajar el cortisol.',
     icon: Icons.air_rounded,
     color: SensoryColors.zenSage,
     destination: const BreathingIntroScreen(),
@@ -458,7 +494,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routinePaintTitle ?? 'Arte Zen & Coloreo',
     category: l10n?.routinePaintCat ?? 'Mindfulness Táctil',
     description:
-        l10n?.routinePaintDesc ?? 'Lienzo de coloreo con pincel, borrador, grosor/espesor variable y plantillas zen para disipar la ansiedad.',
+        l10n?.routinePaintDesc ??
+        'Lienzo de coloreo con pincel, borrador, grosor/espesor variable y plantillas zen para disipar la ansiedad.',
     icon: Icons.palette_rounded,
     color: SensoryColors.zenAmber,
     destination: const ZenPaintScreen(),
@@ -467,7 +504,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineRmpTitle ?? 'Relajación Muscular',
     category: l10n?.routineRmpCat ?? 'Alivio Somático',
     description:
-        l10n?.routineRmpDesc ?? 'Rutina Jacobson guiada con animaciones bio-sensoriales y audio tonos para soltar la tensión física.',
+        l10n?.routineRmpDesc ??
+        'Rutina Jacobson guiada con animaciones bio-sensoriales y audio tonos para soltar la tensión física.',
     icon: Icons.accessibility_new_rounded,
     color: SensoryColors.zenTeal,
     destination: const RmpIntroScreen(),
@@ -476,7 +514,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineSoundTitle ?? 'Terapia de Sonido',
     category: l10n?.routineSoundCat ?? 'Ondas y Sincronía',
     description:
-        l10n?.routineSoundDesc ?? 'Frecuencias curativas y ritmos binaurales combinados para relajar la mente o conciliar el sueño.',
+        l10n?.routineSoundDesc ??
+        'Frecuencias curativas y ritmos binaurales combinados para relajar la mente o conciliar el sueño.',
     icon: Icons.graphic_eq_rounded,
     color: SensoryColors.zenIndigo,
     destination: const SoundTherapySelectorScreen(),
@@ -485,7 +524,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineBallsTitle ?? 'Bolas Sensoriales',
     category: l10n?.routineBallsCat ?? 'Calma Visual',
     description:
-        l10n?.routineBallsDesc ?? 'Genera burbujas de colores que rebotan libremente y emiten sonidos suaves al tocar la pantalla.',
+        l10n?.routineBallsDesc ??
+        'Genera burbujas de colores que rebotan libremente y emiten sonidos suaves al tocar la pantalla.',
     icon: Icons.bubble_chart_rounded,
     color: SensoryColors.calmBlue,
     destination: const BallsScreen(),
@@ -494,7 +534,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineBubblesTitle ?? 'Pop-It / Burbujas',
     category: l10n?.routineBubblesCat ?? 'Enfoque Táctil',
     description:
-        l10n?.routineBubblesDesc ?? 'Presiona y revienta burbujas virtuales con respuestas táctiles suaves y sonidos relajantes.',
+        l10n?.routineBubblesDesc ??
+        'Presiona y revienta burbujas virtuales con respuestas táctiles suaves y sonidos relajantes.',
     icon: Icons.grid_view_rounded,
     color: SensoryColors.calmBlue,
     destination: const BubbleScreen(),
@@ -503,7 +544,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineSpidersTitle ?? 'Arañas Relajantes',
     category: l10n?.routineSpidersCat ?? 'Tranquilidad Táctil',
     description:
-        l10n?.routineSpidersDesc ?? 'Teje líneas y observa cómo las pequeñas arañas escalan y reparan sus redes en armonía visual.',
+        l10n?.routineSpidersDesc ??
+        'Teje líneas y observa cómo las pequeñas arañas escalan y reparan sus redes en armonía visual.',
     icon: Icons.pest_control_rodent_rounded,
     color: SensoryColors.calmGreen,
     destination: const SpidersScreen(),
@@ -512,7 +554,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineCockroachTitle ?? 'Cucaracha Aplastada',
     category: l10n?.routineCockroachCat ?? 'Descarga Activa',
     description:
-        l10n?.routineCockroachDesc ?? 'Toca las cucarachas que corren por la pantalla para una rápida descarga motriz y reflejos.',
+        l10n?.routineCockroachDesc ??
+        'Toca las cucarachas que corren por la pantalla para una rápida descarga motriz y reflejos.',
     icon: Icons.bug_report_rounded,
     color: SensoryColors.calmYellow,
     destination: const CockroachScreen(),
@@ -521,7 +564,8 @@ List<_RoutineItem> _getRoutines(AppLocalizations? l10n) => [
     title: l10n?.routineSpinnerTitle ?? 'Fidget Spinner',
     category: l10n?.routineSpinnerCat ?? 'Enfoque Cinético',
     description:
-        l10n?.routineSpinnerDesc ?? 'Gira el spinner virtual y experimenta una sensación continua de rotación con vibración háptica suave.',
+        l10n?.routineSpinnerDesc ??
+        'Gira el spinner virtual y experimenta una sensación continua de rotación con vibración háptica suave.',
     icon: Icons.refresh_rounded,
     color: SensoryColors.calmPurple,
     destination: const FidgetSpinnerScreen(),

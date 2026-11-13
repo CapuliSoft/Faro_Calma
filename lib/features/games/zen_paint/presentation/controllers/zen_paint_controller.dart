@@ -34,7 +34,10 @@ class ZenPaintController extends ChangeNotifier {
   void initOffsets(Size screenSize) {
     bool changed = false;
     if (floatingPanelOffset == null) {
-      floatingPanelOffset = Offset(screenSize.width - 58, screenSize.height / 2 - 140);
+      floatingPanelOffset = Offset(
+        screenSize.width - 58,
+        screenSize.height / 2 - 140,
+      );
       changed = true;
     }
     if (floatingToolbarOffset == null) {

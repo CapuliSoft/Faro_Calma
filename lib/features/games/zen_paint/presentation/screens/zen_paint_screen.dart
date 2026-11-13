@@ -5,7 +5,6 @@ import '../../domain/models/paint_models.dart';
 import '../../domain/services/canvas_export_service.dart';
 import 'package:gtc6/features/progress/domain/services/progress_service.dart';
 
-
 import '../controllers/zen_paint_controller.dart';
 import '../widgets/zen_paint_canvas.dart';
 import '../widgets/paint_toolbar.dart';
@@ -49,10 +48,12 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
   }
 
   void _onControllerUpdate() {
-    if (_controller.immersiveMode && _immersiveAnimController.status != AnimationStatus.completed) {
+    if (_controller.immersiveMode &&
+        _immersiveAnimController.status != AnimationStatus.completed) {
       _immersiveAnimController.forward();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    } else if (!_controller.immersiveMode && _immersiveAnimController.status != AnimationStatus.dismissed) {
+    } else if (!_controller.immersiveMode &&
+        _immersiveAnimController.status != AnimationStatus.dismissed) {
       _immersiveAnimController.reverse();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
@@ -63,7 +64,8 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
     _controller.removeListener(_onControllerUpdate);
     _immersiveAnimController.dispose();
 
-    final double elapsedMinutes = DateTime.now().difference(_startTime).inSeconds / 60.0;
+    final double elapsedMinutes =
+        DateTime.now().difference(_startTime).inSeconds / 60.0;
     if (elapsedMinutes >= 0.1) {
       Future.microtask(() {
         ProgressService.instance.recordSession('zen_paint', elapsedMinutes);
@@ -87,12 +89,19 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 28),
+            const Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.amber,
+              size: 28,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 isEs ? '¿Salir del lienzo?' : 'Leave canvas?',
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -135,8 +144,12 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
         content: Row(
           children: [
             const SizedBox(
-              width: 20, height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: 14),
             Text(isEs ? 'Guardando imagen...' : 'Saving image...'),
@@ -165,8 +178,12 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
             Expanded(
               child: Text(
                 success
-                    ? (isEs ? '¡Imagen guardada en la galería! 🎨' : 'Image saved to gallery! 🎨')
-                    : (isEs ? 'Error al guardar la imagen' : 'Error saving image'),
+                    ? (isEs
+                          ? '¡Imagen guardada en la galería! 🎨'
+                          : 'Image saved to gallery! 🎨')
+                    : (isEs
+                          ? 'Error al guardar la imagen'
+                          : 'Error saving image'),
               ),
             ),
           ],
@@ -209,12 +226,16 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              isEs ? 'Seleccionar Plantilla o Modo de Dibujo' : 'Select Template or Drawing Mode',
+              isEs
+                  ? 'Seleccionar Plantilla o Modo de Dibujo'
+                  : 'Select Template or Drawing Mode',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             Text(
-              isEs ? 'Dibuja libremente en blanco o colorea plantillas zen prediseñadas.' : 'Draw freely on a blank canvas or color predesigned Zen templates.',
+              isEs
+                  ? 'Dibuja libremente en blanco o colorea plantillas zen prediseñadas.'
+                  : 'Draw freely on a blank canvas or color predesigned Zen templates.',
               style: TextStyle(
                 fontSize: 13,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
@@ -227,7 +248,8 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                 builder: (context, _) => ListView.separated(
                   shrinkWrap: true,
                   itemCount: kArtTemplates.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
                   itemBuilder: (context, idx) {
                     final template = kArtTemplates[idx];
                     final isSelected = idx == _controller.selectedTemplateIndex;
@@ -248,7 +270,9 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                           border: Border.all(
                             color: isSelected
                                 ? SensoryColors.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                                : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.1,
+                                  ),
                             width: isSelected ? 2.0 : 1.0,
                           ),
                         ),
@@ -258,7 +282,9 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                               template.type.icon,
                               color: isSelected
                                   ? SensoryColors.primary
-                                  : theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                                  : theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.8,
+                                    ),
                               size: 28,
                             ),
                             const SizedBox(width: 14),
@@ -278,10 +304,13 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    template.type.getLocalizedDescription(context),
+                                    template.type.getLocalizedDescription(
+                                      context,
+                                    ),
                                     style: TextStyle(
                                       fontSize: 12.5,
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ],
@@ -342,7 +371,9 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final canvasBgColor = isDark ? const Color(0xFF1B2127) : const Color(0xFFFBFBFB);
+    final canvasBgColor = isDark
+        ? const Color(0xFF1B2127)
+        : const Color(0xFFFBFBFB);
     final outlineColor = isDark ? Colors.white : Colors.black87;
 
     return ListenableBuilder(
@@ -360,38 +391,47 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
           },
           child: Scaffold(
             backgroundColor: theme.scaffoldBackgroundColor,
-            appBar: _controller.immersiveMode ? null : AppBar(
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(_controller.selectedTemplate.type.icon, size: 22),
-                  const SizedBox(width: 8),
-                  Text(
-                    _controller.selectedTemplate.type.getLocalizedTitle(context),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+            appBar: _controller.immersiveMode
+                ? null
+                : AppBar(
+                    title: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(_controller.selectedTemplate.type.icon, size: 22),
+                        const SizedBox(width: 8),
+                        Text(
+                          _controller.selectedTemplate.type.getLocalizedTitle(
+                            context,
+                          ),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                      onPressed: _confirmExit,
+                    ),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.save_alt_rounded),
+                        tooltip: 'Guardar como PNG',
+                        onPressed: _controller.completedStrokes.isNotEmpty
+                            ? _exportToPng
+                            : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.fullscreen_rounded),
+                        tooltip: 'Modo Pro (Pantalla Completa)',
+                        onPressed: _controller.toggleImmersiveMode,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                   ),
-                ],
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                onPressed: _confirmExit,
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.save_alt_rounded),
-                  tooltip: 'Guardar como PNG',
-                  onPressed: _controller.completedStrokes.isNotEmpty ? _exportToPng : null,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.fullscreen_rounded),
-                  tooltip: 'Modo Pro (Pantalla Completa)',
-                  onPressed: _controller.toggleImmersiveMode,
-                ),
-                const SizedBox(width: 4),
-              ],
-            ),
             body: SafeArea(
               top: !_controller.immersiveMode,
               child: Stack(
@@ -407,13 +447,23 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                           child: _controller.immersiveMode
                               ? Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: _buildCanvas(isDark, canvasBgColor, outlineColor),
+                                  child: _buildCanvas(
+                                    isDark,
+                                    canvasBgColor,
+                                    outlineColor,
+                                  ),
                                 )
                               : AspectRatio(
                                   aspectRatio: 0.82,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                    child: _buildCanvas(isDark, canvasBgColor, outlineColor),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                    ),
+                                    child: _buildCanvas(
+                                      isDark,
+                                      canvasBgColor,
+                                      outlineColor,
+                                    ),
                                   ),
                                 ),
                         ),
@@ -433,9 +483,11 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                                     isEraser: _controller.isEraser,
                                     onEraserChanged: _controller.setEraser,
                                     strokeWidth: _controller.strokeWidth,
-                                    onStrokeWidthChanged: _controller.setStrokeWidth,
+                                    onStrokeWidthChanged:
+                                        _controller.setStrokeWidth,
                                     strokeOpacity: _controller.strokeOpacity,
-                                    onStrokeOpacityChanged: _controller.setStrokeOpacity,
+                                    onStrokeOpacityChanged:
+                                        _controller.setStrokeOpacity,
                                     onUndo: _controller.undo,
                                     onClear: _controller.clearCanvas,
                                     canUndo: _controller.canUndo,
@@ -451,9 +503,7 @@ class _ZenPaintScreenState extends State<ZenPaintScreen>
                     onExport: _exportToPng,
                     onExit: _confirmExit,
                   ),
-                  ZenPaintImmersiveToolbar(
-                    immersiveAnim: _immersiveAnim,
-                  ),
+                  ZenPaintImmersiveToolbar(immersiveAnim: _immersiveAnim),
                 ],
               ),
             ),
